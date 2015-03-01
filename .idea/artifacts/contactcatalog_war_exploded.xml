@@ -1,0 +1,13 @@
+<component name="ArtifactManager">
+  <artifact type="exploded-war" name="contactcatalog:war exploded">
+    <output-path>$PROJECT_DIR$/target/contactcatalog</output-path>
+    <root id="root">
+      <element id="javaee-facet-resources" facet="contactcatalog/web/Web" />
+      <element id="directory" name="WEB-INF">
+        <element id="directory" name="classes">
+          <element id="module-output" name="contactcatalog" />
+        </element>
+      </element>
+    </root>
+  </artifact>
+</component>
