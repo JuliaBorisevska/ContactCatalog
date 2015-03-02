@@ -15,7 +15,7 @@ import com.itechart.contactcatalog.subject.Contact;
 
 public class ContactService {
 
-	private static Logger logger = LoggerFactory.getLogger(ContactDAO.class);
+	private static Logger logger = LoggerFactory.getLogger(ContactService.class);
 	
 	public static ArrayList<Contact> receiveContacts() throws ServiceException {
 		logger.debug("Start of receiveContacts");

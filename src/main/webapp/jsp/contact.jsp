@@ -12,6 +12,7 @@
 <script src="js/popup.js"  type="text/javascript"></script>
 </head>
 <body>
+<jsp:useBean id="helper" scope="page" class="com.itechart.contactcatalog.helper.ViewHelper" />
 <div class="main">
   <c:import url="header.jsp" />
   <div class="clr"></div>
@@ -27,45 +28,53 @@
     			<p><input type="file" name="f">
    				<input type="submit" value="Отправить"></p>
 			</div>
-      		<img src="images/grey_man.png" onclick="popup('popUpDivImage')" />
+			<c:choose>
+				<c:when test="${ contact.image!=null}" >
+					<img src="${ contact.image}" onclick="popup('popUpDivImage')" />
+				</c:when>
+				<c:otherwise>
+					<img src="images/grey_man.png" onclick="popup('popUpDivImage')" />
+				</c:otherwise>
+			</c:choose>
       	</div>
 		<div class="fieldwrapper">
 			<label for="firstname" class="styled">Имя:</label>
 			<div class="thefield">
-				<input type="text" id="firstname" value="" />
+				<input type="text" id="firstname" value="${contact.firstName}" />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="lastname" class="styled">Фамилия:</label>
 			<div class="thefield">
-				<input type="text" id="lastname" value="" /><br />
+				<input type="text" id="lastname" value="${contact.lastName}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="midlename" class="styled">Отчество:</label>
 			<div class="thefield">
-				<input type="text" id="midlename" value="" /><br />
+				<input type="text" id="midlename" value="${contact.middleName}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="year" class="styled">Дата рождения:</label>
 			<div class="thefield">
-				<input type="text" id="year" value="" /><br />
+				<input type="text" id="year" value="${contact.birthDate}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="sex" class="styled">Пол:</label>
 			<div class="thefield">
 				<ul>
-					<li><input type="radio" name="sex" value=""/>женский</li>
-					<li><input type="radio" name="sex" value=""/>мужской</li>
+					<c:forEach var="elem" items="${helper.takeSexList()}" varStatus="status">
+					<li><input type="radio" name="sex" value="${elem.id }"/>${elem.title }</li>
+					</c:forEach>
 				</ul>
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="citizenship" class="styled">Гражданство:</label>
 			<div class="thefield">
-				<input type="text" id="email" value="" /><br />
+				<input type="text" id="email" value="${contact.citizenship}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
@@ -73,42 +82,45 @@
 			<div class="thefield">
 			<br/>
 				<select id="matrial">
-					<option value="">замужем</option>
-					<option value="">не замужем</option>
+					<c:forEach var="elem" items="${helper.takeMaritalStatusList()}" varStatus="status">
+						<option value="${elem.id}">${elem.title}</option>
+					</c:forEach>
 				</select>
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="site" class="styled">Сайт:</label>
 			<div class="thefield">
-				<input type="text" id="site" value="" /><br />
+				<input type="text" id="site" value="${contact.website}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="email" class="styled">Email:</label>
 			<div class="thefield">
-				<input type="text" id="email" value="" /><br />
+				<input type="text" id="email" value="${contact.email}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="job" class="styled">Место работы:</label>
 			<div class="thefield">
-				<input type="text" id="job" value="" /><br />
+				<input type="text" id="job" value="${contact.company}" /><br />
 			</div>
 		</div>
 		<div class="fieldwrapper">
 			<label for="address" class="styled">Адрес:</label>
 			<div class="thefield">
 				<label for="country">Страна:</label><br />
-				<input type="text" id="country" value="" /><br />
+				<input type="text" id="country" value="${contact.address.country}" /><br />
 				<label for="town">Город:</label><br />
-				<input type="text" id="town" value="" /><br />
+				<input type="text" id="town" value="${contact.address.town}" /><br />
 				<label for="street">Улица:</label><br />
-				<input type="text" id="street" value="" /><br />
+				<input type="text" id="street" value="${contact.address.street}" /><br />
 				<label for="house">Дом:</label><br />
-				<input type="text" id="house" value="" /><br />
+				<input type="text" id="house" value="${contact.address.house}" /><br />
 				<label for="flat">Квартира:</label><br />
-				<input type="text" id="flat" value="" /><br />
+				<input type="text" id="flat" value="${contact.address.flat}" /><br />
+				<label for="flat">Index:</label><br />
+				<input type="text" id="index" value="${contact.address.indexValue}" /><br />
 			</div>
 		</div>
 		
@@ -135,50 +147,22 @@
                         Коментарий
                     </th>
                 </tr>
-                <%-- <c:forEach var="elem" items="${contacts}" varStatus="status"> --%>
+                <c:forEach var="elem" items="${contact.phones}" varStatus="status">
                     <tr>
                             <td>
                             	<input type="checkbox">
                             </td>
                             <td>
-                                номер
+                                +${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}
                             </td>
                             <td>
-                                дата 
+                                ${elem.type} 
                             </td>
                             <td>
-                                адрес
+                                ${elem.userComment}
                             </td>
                     </tr>
-                    <tr>
-                            <td>
-                            	<input type="checkbox">
-                            </td>
-                            <td>
-                                номер
-                            </td>
-                            <td>
-                                дата 
-                            </td>
-                            <td>
-                                адрес
-                            </td>
-                    </tr>
-                    <tr>
-                            <td>
-                            	<input type="checkbox">
-                            </td>
-                            <td>
-                                номер
-                            </td>
-                            <td>
-                                дата 
-                            </td>
-                            <td>
-                                адрес
-                            </td>
-                    </tr>
-                <%--</c:forEach> --%>
+                </c:forEach>
             </table>
 		<br/><br/><br/>
 		<div id="boxtab-blue">
@@ -202,19 +186,19 @@
                         Коментарий
                     </th>
                 </tr>
-                <c:forEach var="elem" items="${contacts}" varStatus="status">
+                <c:forEach var="elem" items="${contact.attachments}" varStatus="status">
                     <tr>
                             <td>
                             	<input type="checkbox">
                             </td>
                             <td>
-                                файл
+                                ${elem.tirle}
                             </td>
                             <td>
-                                ${elem.birthDate} 
+                                ${elem.uploads} 
                             </td>
                             <td>
-                                ${elem.address} 
+                                ${elem.userComment} 
                             </td>
                     </tr>
                 </c:forEach>
