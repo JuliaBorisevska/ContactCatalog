@@ -69,18 +69,26 @@ public class ContactServlet extends HttpServlet {
 		String page = null;
 		CommandMapper mapper = new CommandMapper();
 		ActionCommand command = mapper.defineCommand(request.getServletPath());  //проверка на null 
-		SessionRequestContent requestContent = new SessionRequestContent();
-        requestContent.extractValues(request);
-		result=command.execute(requestContent); //возврат 0 или 1, если ошибка
-		requestContent.insertAttributes(request);
 		page=mapper.definePage(request.getServletPath());
-		if (result==0){
-			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
-			dispatcher.forward(request, response);
+		if (command!=null && page!=null ){
+			SessionRequestContent requestContent = new SessionRequestContent();
+	        requestContent.extractValues(request);
+			result=command.execute(requestContent); //возврат 0 или 1, если ошибка
+			requestContent.insertAttributes(request);
+			if (result==0){
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
+				dispatcher.forward(request, response);
+			}else{
+				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/customerror.jsp");
+				dispatcher.forward(request, response);
+			}
 		}else{
+			request.setAttribute("customerror", "Null command or page");
+			logger.error("Command: {}, page: {}", command.getClass().getName(), page);
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/customerror.jsp");
 			dispatcher.forward(request, response);
 		}
+		
 		
 	}
 

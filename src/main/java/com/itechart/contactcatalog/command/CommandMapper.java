@@ -8,7 +8,8 @@ public class CommandMapper {
 
 	private static ActionMapBuilder builder = new ActionMapBuilder();
 	
-	public CommandMapper() {	}
+	public CommandMapper() {
+	}
 	
 	
 	//могут вернуть null

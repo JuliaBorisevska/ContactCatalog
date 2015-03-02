@@ -8,7 +8,11 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.log4j.Logger;
+
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,13 +23,14 @@ import com.itechart.contactcatalog.controller.ContactServlet;
 
 public class ActionMapBuilder {
 
-	static Logger logger = Logger.getLogger(ActionMapBuilder.class);
+	private static Logger logger = LoggerFactory.getLogger(ActionMapBuilder.class);
 
 	private Map<String, ActionCommand> commandMap;
 	private Map<String, String> pageMap;
 	private DocumentBuilder docBuilder;
 	
 	public ActionMapBuilder() {
+		logger.debug("Action Map Builder constructor");
 		this.commandMap = new HashMap<String, ActionCommand>();
 		this.pageMap = new HashMap<String, String>();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();

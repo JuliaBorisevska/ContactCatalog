@@ -7,9 +7,9 @@
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="../css/style.css" rel="stylesheet" type="text/css" />
-<link href="../css/edit.css" rel="stylesheet" type="text/css" />
-<script src="../js/popup.js"  type="text/javascript"></script>
+<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="css/edit.css" rel="stylesheet" type="text/css" />
+<script src="js/popup.js"  type="text/javascript"></script>
 </head>
 <body>
 <div class="main">
@@ -27,7 +27,7 @@
     			<p><input type="file" name="f">
    				<input type="submit" value="Отправить"></p>
 			</div>
-      		<img src="../images/grey_man.png" onclick="popup('popUpDivImage')" />
+      		<img src="images/grey_man.png" onclick="popup('popUpDivImage')" />
       	</div>
 		<div class="fieldwrapper">
 			<label for="firstname" class="styled">Имя:</label>

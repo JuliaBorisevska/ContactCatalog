@@ -66,7 +66,7 @@
         <div class="gadget">
           <ul class="sb_menu">
             <li>
-            	<form action="./ContactServlet/createContact.do" method="post">
+            	<form action="createContact.do" method="post">
             		<input type="submit" name="create" value="Создать контакт" />
             	</form>
             </li>

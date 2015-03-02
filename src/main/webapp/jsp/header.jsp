@@ -13,7 +13,7 @@
 <body>
   <div class="header">
       <div class="logo">
-        <h1><a href="index.html"><span>
+        <h1><a href="getContactList.do"><span>
         <fmt:message key="header.label.catalog" bundle="${rb}" />
          </span><fmt:message key="header.label.contact" bundle="${rb}" /></a></h1>
       </div>
