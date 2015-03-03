@@ -15,7 +15,7 @@
   <div class="clr"></div>
   <div class="content">
     <div class="content_resize">
-    <p class="page-info"><span>Список контактов</span></p>
+    <p class="page-info">Список контактов</p>
     <form action="deleteOrSendMails.do" method="post">
       <div class="mainbar">
       
@@ -45,7 +45,7 @@
                             	<input type="checkbox">
                             </td>
                             <td>
-                            	<a href="editContact.do?id=${elem.id}" class="name">${elem.lastName} ${elem.firstName} ${elem.middleName}</a>
+                            	<a href="${pageContext.request.contextPath}/editContact.do?id=${elem.id}" class="name">${elem.lastName} ${elem.firstName} ${elem.middleName}</a>
                             </td>
                             <td>
                                 ${elem.birthDate} 

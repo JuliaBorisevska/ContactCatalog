@@ -38,7 +38,7 @@ public class ActionMapBuilder {
 			docBuilder = factory.newDocumentBuilder();
 			fillMaps(ContactServlet.getPrefix()+"/WEB-INF/classes/actions.xml");
 		} catch (ParserConfigurationException e) {
-			logger.error("Parser configuration error: " + e);
+			logger.error("Parser configuration error: {} ", e);
 		}
 	}
 	
@@ -56,28 +56,18 @@ public class ActionMapBuilder {
 		try {
 			doc = docBuilder.parse(fileName);
 			Element root = doc.getDocumentElement();
-			NodeList studentsList = root.getElementsByTagName("action");
-			for (int i = 0; i < studentsList.getLength(); i++) {
-				Element studentElement = (Element) studentsList.item(i);
-				String title = getElementTextContent(studentElement, "title");
-				String className = getElementTextContent(studentElement, "class");
-				String jsp = getElementTextContent(studentElement, "jsp");
+			NodeList actionList = root.getElementsByTagName("action");
+			for (int i = 0; i < actionList.getLength(); i++) {
+				Element actionElement = (Element) actionList.item(i);
+				String title = getElementTextContent(actionElement, "title");
+				String className = getElementTextContent(actionElement, "class");
+				String jsp = getElementTextContent(actionElement, "jsp");
 				commandMap.put(title, (ActionCommand) Class.forName(className).newInstance());
 				pageMap.put(title, jsp);
 			}
-		} catch (IOException e) {
-			logger.error("File error or I/O error: " + e);
-		} catch (SAXException e) {
-			logger.error("Parsing failure: " + e);
-		} catch (InstantiationException e) {
-			logger.error("InstantiationException " + e.getMessage());
-		} catch (IllegalAccessException e) {
-			logger.error("IllegalAccessException " + e.getMessage());
-		} catch (ClassNotFoundException e) {
-			logger.error("ClassNotFoundException " + e.getMessage());
-		} 
-
-
+		} catch (IOException | SAXException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			logger.error("Ecxeption in fillMaps: {}" , e);
+		}
 	}
 	
 	private static String getElementTextContent(Element element, String elementName) {

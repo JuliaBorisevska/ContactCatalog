@@ -2,17 +2,17 @@
 <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.example.com/application">
     <action>
-        <title>/createContact.do</title>
+        <title>createContact.do</title>
         <class>com.itechart.contactcatalog.command.ContactCreationCommand</class>
         <jsp>/jsp/contact.jsp</jsp>
     </action>
     <action>
-        <title>/editContact.do</title>
-        <class>com.itechart.contactcatalog.command.ContactEditionCommand</class>
+        <title>editContact.do</title>
+        <class>com.itechart.contactcatalog.command.ContactEditingCommand</class>
         <jsp>/jsp/contact.jsp</jsp>
     </action>
     <action>
-        <title>/getContactList.do</title>
+        <title>getContactList.do</title>
         <class>com.itechart.contactcatalog.command.ContactListCommand</class>
         <jsp>/index.jsp</jsp>
     </action>

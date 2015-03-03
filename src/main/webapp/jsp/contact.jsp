@@ -18,22 +18,29 @@
   <div class="clr"></div>
   <div class="content">
     <div class="content_resize">
-    <p class="page-info"><span>Создание контакта</span></p>
+    <p class="page-info">Создание контакта</p>
       <form class="contactform" enctype="multipart/form-data" method="post">
       <div class="left">
       	<div class="fieldwrapper">
       		<div id="blanket" style="display:none;"></div>
-      		<div id="popUpDivImage" style="display:none;">  
-    			<a href="#" onclick="popup('popUpDivImage')">Закрыть PopUp</a>
-    			<p><input type="file" name="f">
-   				<input type="submit" value="Отправить"></p>
+      		
+      		<div id="popUpDivImage" style="display:none;"> 
+      			<p class="page-info"><span>Выбор фото</span></p> 
+      			<div id="imageFile">
+      				<input type="file" name="foto" accept="image/*" size="50">
+      			</div>
+   				<div class="buttonsdiv" >
+					<input type="submit" value="Сохранить" id="savebutton" onclick="popup('popUpDivImage', 200, 400)"/> 
+					<input type="submit" value="Отменить" onclick="popup('popUpDivImage', 200, 400)"/>
+				</div>
 			</div>
+			
 			<c:choose>
 				<c:when test="${ contact.image!=null}" >
-					<img src="../${contact.image}" onclick="popup('popUpDivImage')" />
+					<img src="../${contact.image}" onclick="popup('popUpDivImage', 200, 400)" />
 				</c:when>
 				<c:otherwise>
-					<img src="../images/grey_man.png" onclick="popup('popUpDivImage')" />
+					<img src="../images/grey_man.png" onclick="popup('popUpDivImage', 200, 400)" />
 				</c:otherwise>
 			</c:choose>
       	</div>
@@ -126,16 +133,53 @@
 		
 	</div>
 	<div class="right">
-	<!-- <div id="blanket" style="display:none;"></div> -->
+	
     <div id="popUpDivPhone" style="display:none;">  
-    	<a href="#" onclick="popup('popUpDivPhone')">Закрыть PopUp</a><br />
-    	<input type="text"  value="" />		
+    	<p class="page-info"><span>Создание/редактирование телефона</span></p>
+		<div class="fieldwrapper">
+			<label for="countryCode" class="styled">Код страны:</label>
+			<div class="thefield">
+				<input type="text" id="countryCode" value="" /><br />
+			</div>
+		</div>
+		<div class="fieldwrapper">
+			<label for="operatorCode" class="styled">Код оператора:</label>
+			<div class="thefield">
+				<input type="text" id="operatorCode" value="" /><br />
+			</div>
+		</div>
+		<div class="fieldwrapper">
+			<label for="number" class="styled">Телефонный номер:</label>
+			<div class="thefield">
+				<input type="text" id="number" value="" /><br />
+			</div>
+		</div>
+		<div class="fieldwrapper">
+			<label for="phoneType" class="styled">Пол:</label>
+			<div class="thefield">
+				<ul>
+					<c:forEach var="elem" items="${helper.takePhoneTypes()}" varStatus="status">
+					<li><input type="radio" name="phoneType" value="${elem.id }"/>${elem.title}</li>
+					</c:forEach>
+				</ul>
+			</div>
+		</div> 
+		<div class="fieldwrapper">
+			<label for="comment" class="styled">Коментарий:</label>
+			<div class="thefield">
+				<textarea name="phoneComment" ></textarea>
+			</div>
+		</div>
+   		<div class="buttonsdiv" >
+			<input type="submit" value="Сохранить" id="savebutton" onclick="popup('popUpDivPhone', 450, 600)"/> 
+			<input type="submit" value="Отменить" onclick="popup('popUpDivPhone', 450, 600)"/>
+		</div>		
 	</div>
+	
 		<div id="boxtab-blue">
 			<ul>
-				<li class="first"><a href="#" ><span>Удалить</span></a></li>
-				<li class="active"><a href="#" onclick="popup('popUpDivPhone')"><span>Редактировать</span></a></li>
-				<li class="last"><a href="#" onclick="popup('popUpDivPhone')"><span>Создать</span></a></li>
+				<li class="active"><a href="#"><span>Удалить</span></a></li>
+				<li class="last"><a href="#" onclick="popup('popUpDivPhone', 450, 600)"><span>Создать</span></a></li>
 			</ul>
 		</div>
 		<p class="table-info"><span>Список контактных телефонов</span></p>
@@ -158,7 +202,8 @@
                             	<input type="checkbox">
                             </td>
                             <td>
-                                +${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}
+                            	<a href="${pageContext.request.contextPath}/editContact.do?id=${elem.id}" class="name" onclick="popup('popUpDivPhone', 450, 600)">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
+                  
                             </td>
                             <td>
                                 ${elem.type} 
@@ -168,13 +213,33 @@
                             </td>
                     </tr>
                 </c:forEach>
+                <tr>
+                            <td>
+                            	<input type="checkbox">
+                            </td>
+                            <td>
+                            	<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600)">+375 (29) 2886668</a>
+                  
+                            </td>
+                            <td>
+                                мобильный
+                            </td>
+                            <td>
+                                
+                            </td>
+                    </tr>
             </table>
 		<br/><br/><br/>
+		
+		<div id="popUpDivAttach" style="display:none;">  
+    		<a href="#" onclick="popup('popUpDivAttach', 400, 600)">Закрыть PopUp</a><br />
+    		<input type="text"  value="" />		
+		</div>
+		
 		<div id="boxtab-blue">
 			<ul>
-				<li class="first"><a href="#"><span>Удалить</span></a></li>
-				<li class="active"><a href="#"><span>Редактировать</span></a></li>
-				<li class="last"><a href="#"><span>Создать</span></a></li>
+				<li class="active"><a href="#"><span>Удалить</span></a></li>
+				<li class="last"><a href="#" onclick="popup('popUpDivAttach', 400, 600)"><span>Создать</span></a></li>
 			</ul>
 		</div>
 		<p class="table-info"><span>Список присоединений</span></p>
@@ -197,7 +262,7 @@
                             	<input type="checkbox">
                             </td>
                             <td>
-                                ${elem.tirle}
+                            	<a href="${pageContext.request.contextPath}/editAttachment.do?id=${elem.id}" class="name" onclick="popup('popUpDivAttach', 400, 600)">${elem.title}</a>
                             </td>
                             <td>
                                 ${elem.uploads} 
@@ -213,7 +278,7 @@
 	<div class="buttonsdiv" >
 			<input type="submit" value="Сохранить" id="savebutton" /> 
 			<input type="reset" value="Отменить" />
-		</div>
+	</div>
 	<br/>
 </form>
       <div class="clr"></div>

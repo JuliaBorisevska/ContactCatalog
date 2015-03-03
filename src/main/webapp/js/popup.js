@@ -3,7 +3,7 @@ function toggle(div_id) {
     if ( el.style.display == 'none' ) {    el.style.display = 'block';}
     else {el.style.display = 'none';}
 }
-function blanket_size(popUpDivVar) {
+function blanket_size(popUpDivVar, heightPU) {
     if (typeof window.innerWidth != 'undefined') {
         viewportheight = window.innerHeight;
     } else {
@@ -21,11 +21,11 @@ function blanket_size(popUpDivVar) {
     var blanket = document.getElementById('blanket');
     blanket.style.height = blanket_height + 'px';
     var popUpDiv = document.getElementById(popUpDivVar);
-    popUpDiv_height=blanket_height/10-200;//200 это половина высоты popup окна
+    popUpDiv_height=blanket_height/10-heightPU/2;//200 это половина высоты popup окна
     //popUpDiv.style.top = popUpDiv_height + 'px';
     popUpDiv.style.top = 100 + 'px';
 }
-function window_pos(popUpDivVar) {
+function window_pos(popUpDivVar, widthPU) {
     if (typeof window.innerWidth != 'undefined') {
         viewportwidth = window.innerHeight;
     } else {
@@ -41,12 +41,12 @@ function window_pos(popUpDivVar) {
         }
     }
     var popUpDiv = document.getElementById(popUpDivVar);
-    window_width=window_width/2-300;//300 это половина ширины popup окна
+    window_width=window_width/2-widthPU/2;//300 это половина ширины popup окна
     popUpDiv.style.left = window_width + 'px';
 }
-function popup(windowname) {
-    blanket_size(windowname);
-    window_pos(windowname);
+function popup(windowname, heightPopUp, widthPopUp) {
+    blanket_size(windowname, heightPopUp);
+    window_pos(windowname, widthPopUp);
     toggle('blanket');
     toggle(windowname);        
 }

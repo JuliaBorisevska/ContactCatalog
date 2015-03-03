@@ -8,14 +8,14 @@
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
   <div class="header">
       <div class="logo">
-        <h1><a href="getContactList.do"><span>
-        <fmt:message key="header.label.catalog" bundle="${rb}" />
-         </span><fmt:message key="header.label.contact" bundle="${rb}" /></a></h1>
+        <h1><a href="${pageContext.request.contextPath}/getContactList.do">
+        <span><fmt:message key="header.label.catalog" bundle="${rb}" /></span>
+        	<fmt:message key="header.label.contact" bundle="${rb}" /></a></h1>
       </div>
   </div>
 </body>

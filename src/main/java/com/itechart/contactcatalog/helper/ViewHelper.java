@@ -7,11 +7,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itechart.contactcatalog.dao.ContactDAO;
+import com.itechart.contactcatalog.dao.PhoneDAO;
 import com.itechart.contactcatalog.exception.ConnectionPoolException;
 import com.itechart.contactcatalog.exception.DAOException;
-import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.pool.ConnectionPool;
 import com.itechart.contactcatalog.subject.MaritalStatus;
+import com.itechart.contactcatalog.subject.PhoneType;
 import com.itechart.contactcatalog.subject.Sex;
 
 public class ViewHelper {
@@ -34,6 +35,25 @@ public class ViewHelper {
 			}
         }
         return sexList;
+    }
+	
+	public ArrayList<PhoneType> takePhoneTypes(){
+        ArrayList<PhoneType> phoneTypes = new ArrayList<>();
+        Connection conn = null;
+        try {
+			conn = ConnectionPool.getInstance().getConnection();
+			PhoneDAO dao = new PhoneDAO(conn);
+			phoneTypes = dao.takePhoneTypes();
+		}catch (ConnectionPoolException | DAOException e) {  //или выбрасывать на страницу?
+        	logger.error("Exception in takePhoneTypes: {} ", e);
+		} finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in takePhoneTypes: {} ", e);
+			}
+        }
+        return phoneTypes;
     }
 	
 	public ArrayList<MaritalStatus> takeMaritalStatusList(){

@@ -1,6 +1,7 @@
 package com.itechart.contactcatalog.controller;
 
 import java.io.IOException;
+import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -67,9 +68,11 @@ public class ContactServlet extends HttpServlet {
 		logger.debug("Path info: {}", request.getPathInfo());
 		int result;
 		String page = null;
+		Pattern separator = Pattern.compile("/");
+		String [] parts = separator.split(request.getServletPath());
 		CommandMapper mapper = new CommandMapper();
-		ActionCommand command = mapper.defineCommand(request.getServletPath());  //проверка на null 
-		page=mapper.definePage(request.getServletPath());
+		ActionCommand command = mapper.defineCommand(parts[parts.length-1]);  //проверка на null 
+		page=mapper.definePage(parts[parts.length-1]);
 		if (command!=null && page!=null ){
 			SessionRequestContent requestContent = new SessionRequestContent();
 	        requestContent.extractValues(request);
