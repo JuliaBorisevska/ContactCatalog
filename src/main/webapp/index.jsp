@@ -16,11 +16,13 @@
   <div class="content">
     <div class="content_resize">
     <p class="page-info"><span>Список контактов</span></p>
+    <form action="deleteOrSendMails.do" method="post">
       <div class="mainbar">
       
         <div class="article">
           
           <div class="clr"></div>
+          
           <table>
                 <tr>
                     <th>&nbsp;</th>
@@ -43,7 +45,7 @@
                             	<input type="checkbox">
                             </td>
                             <td>
-                                <input type="submit" name="${elem.id}" value="${elem.lastName} ${elem.firstName} ${elem.middleName} " class="name"/>
+                            	<a href="editContact.do?id=${elem.id}" class="name">${elem.lastName} ${elem.firstName} ${elem.middleName}</a>
                             </td>
                             <td>
                                 ${elem.birthDate} 
@@ -66,20 +68,17 @@
         <div class="gadget">
           <ul class="sb_menu">
             <li>
-            	<form action="createContact.do" method="post">
-            		<input type="submit" name="create" value="Создать контакт" />
-            	</form>
+            	<a href="jsp/contact.jsp">Создать контакт</a>
             </li>
             <li>
-            	<form action="./ContactServlet" method="post">
-            		<input type="submit" name="delete" value="Удалить контакт" />
-            	</form>
+            	<input type="submit" name="delete" value="Удалить контакты" />
             </li>
-            <li><input type="submit" name="find" value="Найти контакт" /></li>
+            <li><a href="jsp/search.jsp">Найти контакт</a></li>
             <li><input type="submit" name="send" value="Отправить Email" /></li>
           </ul>
         </div>
       </div>
+      </form>
       <div class="clr"></div>
     </div>
   </div>

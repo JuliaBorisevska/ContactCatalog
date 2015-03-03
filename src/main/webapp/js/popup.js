@@ -21,8 +21,9 @@ function blanket_size(popUpDivVar) {
     var blanket = document.getElementById('blanket');
     blanket.style.height = blanket_height + 'px';
     var popUpDiv = document.getElementById(popUpDivVar);
-    popUpDiv_height=blanket_height/2-200;//200 это половина высоты popup окна
-    popUpDiv.style.top = popUpDiv_height + 'px';
+    popUpDiv_height=blanket_height/10-200;//200 это половина высоты popup окна
+    //popUpDiv.style.top = popUpDiv_height + 'px';
+    popUpDiv.style.top = 100 + 'px';
 }
 function window_pos(popUpDivVar) {
     if (typeof window.innerWidth != 'undefined') {
@@ -40,7 +41,7 @@ function window_pos(popUpDivVar) {
         }
     }
     var popUpDiv = document.getElementById(popUpDivVar);
-    window_width=window_width/2-200;//200 это половина ширины popup окна
+    window_width=window_width/2-300;//300 это половина ширины popup окна
     popUpDiv.style.left = window_width + 'px';
 }
 function popup(windowname) {

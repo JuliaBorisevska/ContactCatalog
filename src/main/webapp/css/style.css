@@ -138,19 +138,20 @@ ul.sb_menu li {
 	padding:4px 0 4px 12px;
 	width:220px;
 }
-ul.sb_menu li input{
+ul.sb_menu li input, ul.sb_menu li a{
 	color:#959595;
 	background:#fff;
 	text-decoration:none;
 	margin-left:-12px;
 	padding-left:12px;
 	border-style:none;
+	font-size: 10pt;
 }
-ul.sb_menu li input:hover {
+ul.sb_menu li input:hover,ul.sb_menu li a:hover {
 	color:#2cadff;
 	text-decoration:underline;
 }
-ul.sb_menu li input:focus {
+ul.sb_menu li input:focus,ul.sb_menu li a:focus {
 	outline: 0;
 }
 

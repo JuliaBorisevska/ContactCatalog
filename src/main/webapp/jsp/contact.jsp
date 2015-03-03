@@ -7,9 +7,9 @@
 <head>
 <title></title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-<link href="css/edit.css" rel="stylesheet" type="text/css" />
-<script src="js/popup.js"  type="text/javascript"></script>
+<link href="../css/style.css" rel="stylesheet" type="text/css" />
+<link href="../css/edit.css" rel="stylesheet" type="text/css" />
+<script src="../js/popup.js"  type="text/javascript"></script>
 </head>
 <body>
 <jsp:useBean id="helper" scope="page" class="com.itechart.contactcatalog.helper.ViewHelper" />
@@ -30,10 +30,10 @@
 			</div>
 			<c:choose>
 				<c:when test="${ contact.image!=null}" >
-					<img src="${ contact.image}" onclick="popup('popUpDivImage')" />
+					<img src="../${contact.image}" onclick="popup('popUpDivImage')" />
 				</c:when>
 				<c:otherwise>
-					<img src="images/grey_man.png" onclick="popup('popUpDivImage')" />
+					<img src="../images/grey_man.png" onclick="popup('popUpDivImage')" />
 				</c:otherwise>
 			</c:choose>
       	</div>
@@ -126,11 +126,16 @@
 		
 	</div>
 	<div class="right">
+	<!-- <div id="blanket" style="display:none;"></div> -->
+    <div id="popUpDivPhone" style="display:none;">  
+    	<a href="#" onclick="popup('popUpDivPhone')">Закрыть PopUp</a><br />
+    	<input type="text"  value="" />		
+	</div>
 		<div id="boxtab-blue">
 			<ul>
-				<li class="first"><a href="#"><span>Удалить</span></a></li>
-				<li class="active"><a href="#"><span>Редактировать</span></a></li>
-				<li class="last"><a href="#"><span>Создать</span></a></li>
+				<li class="first"><a href="#" ><span>Удалить</span></a></li>
+				<li class="active"><a href="#" onclick="popup('popUpDivPhone')"><span>Редактировать</span></a></li>
+				<li class="last"><a href="#" onclick="popup('popUpDivPhone')"><span>Создать</span></a></li>
 			</ul>
 		</div>
 		<p class="table-info"><span>Список контактных телефонов</span></p>
