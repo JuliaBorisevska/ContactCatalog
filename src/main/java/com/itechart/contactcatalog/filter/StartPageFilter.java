@@ -10,10 +10,10 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.itechart.contactcatalog.command.ActionCommand;
 import com.itechart.contactcatalog.command.ContactListCommand;
-import com.itechart.contactcatalog.command.SessionRequestContent;
 
 /**
  * Servlet Filter implementation class StartPageFilter
@@ -24,7 +24,6 @@ public class StartPageFilter implements Filter {
 	 * @see Filter#destroy()
 	 */
 	public void destroy() {
-		// TODO Auto-generated method stub
 	}
 
 	/**
@@ -32,11 +31,9 @@ public class StartPageFilter implements Filter {
 	 */
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest)request;
+		HttpServletResponse resp = (HttpServletResponse)response;
         ActionCommand command = new ContactListCommand();
-        SessionRequestContent requestContent = new SessionRequestContent();
-        requestContent.extractValues(req);
-        command.execute(requestContent);
-        requestContent.insertAttributes(req);
+        command.execute(req, resp);
         RequestDispatcher dispatcher = req.getServletContext().getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);
 		chain.doFilter(request, response);

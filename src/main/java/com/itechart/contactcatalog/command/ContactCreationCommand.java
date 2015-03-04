@@ -1,15 +1,18 @@
 package com.itechart.contactcatalog.command;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 
 
 public class ContactCreationCommand implements ActionCommand {
 
 	@Override
-	public int execute(SessionRequestContent requestContent) {
+	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
 		
 		
-		return 0;
+		return true;
 	}
 
 }

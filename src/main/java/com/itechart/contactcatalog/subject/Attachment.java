@@ -2,6 +2,7 @@ package com.itechart.contactcatalog.subject;
 
 public class Attachment extends Entity {
 	private String title;
+	private String path;
 	private String uploads;
 	private String userComment;
 	
@@ -30,6 +31,14 @@ public class Attachment extends Entity {
 
 	public void setUserComment(String comment) {
 		this.userComment = comment;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
 	}
 	
 	

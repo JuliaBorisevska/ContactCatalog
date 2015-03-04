@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 
 import com.itechart.contactcatalog.command.ActionCommand;
 import com.itechart.contactcatalog.command.CommandMapper;
-import com.itechart.contactcatalog.command.SessionRequestContent;
 
 /**
  * Servlet implementation class ContactServlet
@@ -66,7 +65,6 @@ public class ContactServlet extends HttpServlet {
 		logger.debug("Start processRequest");
 		logger.debug("Path info: {}", request.getServletPath());
 		logger.debug("Path info: {}", request.getPathInfo());
-		int result;
 		String page = null;
 		Pattern separator = Pattern.compile("/");
 		String [] parts = separator.split(request.getServletPath());
@@ -74,11 +72,7 @@ public class ContactServlet extends HttpServlet {
 		ActionCommand command = mapper.defineCommand(parts[parts.length-1]);  //проверка на null 
 		page=mapper.definePage(parts[parts.length-1]);
 		if (command!=null && page!=null ){
-			SessionRequestContent requestContent = new SessionRequestContent();
-	        requestContent.extractValues(request);
-			result=command.execute(requestContent); //возврат 0 или 1, если ошибка
-			requestContent.insertAttributes(request);
-			if (result==0){
+			if (command.execute(request, response)){
 				RequestDispatcher dispatcher = getServletContext().getRequestDispatcher(page);
 				dispatcher.forward(request, response);
 			}else{
@@ -87,7 +81,7 @@ public class ContactServlet extends HttpServlet {
 			}
 		}else{
 			request.setAttribute("customerror", "Null command or page");
-			logger.error("Command: {}, page: {}", command.getClass().getName(), page);
+			logger.error("Command: {}, page: {}", command, page);
 			RequestDispatcher dispatcher = getServletContext().getRequestDispatcher("/jsp/customerror.jsp");
 			dispatcher.forward(request, response);
 		}

@@ -13,6 +13,7 @@ public class Contact extends Entity {
 	private String company;
 	private Sex sex;
 	private MaritalStatus maritalStatus;
+	private String image;
 	private Address address;
 	private List<Phone> phones;
 	private List<Attachment> attachments;
@@ -98,6 +99,14 @@ public class Contact extends Entity {
 	}
 	public void setAttachments(List<Attachment> attachments) {
 		this.attachments = attachments;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 	
 	

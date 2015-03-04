@@ -1,7 +1,10 @@
 package com.itechart.contactcatalog.command;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 
 
 public interface ActionCommand {
-	int execute(SessionRequestContent requestContent);
+	boolean execute(HttpServletRequest request, HttpServletResponse response);
 }

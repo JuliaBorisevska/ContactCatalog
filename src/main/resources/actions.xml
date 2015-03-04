@@ -12,6 +12,11 @@
         <jsp>/jsp/contact.jsp</jsp>
     </action>
     <action>
+        <title>changeContact.do</title>
+        <class>com.itechart.contactcatalog.command.ContactChangeCommand</class>
+        <jsp>/jsp/contact.jsp</jsp>
+    </action>
+    <action>
         <title>getContactList.do</title>
         <class>com.itechart.contactcatalog.command.ContactListCommand</class>
         <jsp>/index.jsp</jsp>
