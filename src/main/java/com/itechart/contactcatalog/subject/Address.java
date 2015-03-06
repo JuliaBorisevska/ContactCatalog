@@ -6,9 +6,9 @@ public class Address implements Serializable, Cloneable{
 	private String country;
 	private String town;
 	private String street;
-	private int house;
-	private int flat;
-	private long indexValue;
+	private Integer house;
+	private Integer flat;
+	private Long indexValue;
 	
 	public Address() {
 		super();
@@ -38,27 +38,27 @@ public class Address implements Serializable, Cloneable{
 		this.street = street;
 	}
 
-	public int getHouse() {
+	public Integer getHouse() {
 		return house;
 	}
 
-	public void setHouse(int house) {
+	public void setHouse(Integer house) {
 		this.house = house;
 	}
 
-	public int getFlat() {
+	public Integer getFlat() {
 		return flat;
 	}
 
-	public void setFlat(int flat) {
+	public void setFlat(Integer flat) {
 		this.flat = flat;
 	}
 
-	public long getIndexValue() {
+	public Long getIndexValue() {
 		return indexValue;
 	}
 
-	public void setIndexValue(long indexValue) {
+	public void setIndexValue(Long indexValue) {
 		this.indexValue = indexValue;
 	}
 

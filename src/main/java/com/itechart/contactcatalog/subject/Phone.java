@@ -1,36 +1,36 @@
 package com.itechart.contactcatalog.subject;
 
 public class Phone extends Entity {
-	private int countryCode;
-	private int operatorCode;
-	private long basicNumber;
+	private Integer countryCode;
+	private Integer operatorCode;
+	private Long basicNumber;
 	private PhoneType type; 
 	private String userComment;
 	
 	public Phone() {
 	}
 
-	public int getCountryCode() {
+	public Integer getCountryCode() {
 		return countryCode;
 	}
 
-	public void setCountryCode(int countryCode) {
+	public void setCountryCode(Integer countryCode) {
 		this.countryCode = countryCode;
 	}
 
-	public int getOperatorCode() {
+	public Integer getOperatorCode() {
 		return operatorCode;
 	}
 
-	public void setOperatorCode(int operatorCode) {
+	public void setOperatorCode(Integer operatorCode) {
 		this.operatorCode = operatorCode;
 	}
 
-	public long getBasicNumber() {
+	public Long getBasicNumber() {
 		return basicNumber;
 	}
 
-	public void setBasicNumber(long number) {
+	public void setBasicNumber(Long number) {
 		this.basicNumber = number;
 	}
 

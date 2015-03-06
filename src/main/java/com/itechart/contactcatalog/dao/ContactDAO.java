@@ -55,9 +55,9 @@ public class ContactDAO extends AbstractDAO<Contact> {
                 address.setCountry(rs.getString(13));
                 address.setTown(rs.getString(14));
                 address.setStreet(rs.getString(15));
-                address.setHouse(rs.getInt(16));
-                address.setFlat(rs.getInt(17));
-                address.setIndexValue(rs.getInt(18));
+                address.setHouse(rs.getInt(16)!=0?rs.getInt(16):null);
+                address.setFlat(rs.getInt(17)!=0?rs.getInt(17):null);
+                address.setIndexValue(rs.getLong(18)!=0?rs.getLong(18):null);
                 contact.setAddress(address);
             }else{
             	throw new DAOException("The contact with this ID doesn't exist.");

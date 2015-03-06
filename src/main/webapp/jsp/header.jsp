@@ -14,8 +14,12 @@
   <div class="header">
       <div class="logo">
         <h1><a href="${pageContext.request.contextPath}/getContactList.do">
-        <span><fmt:message key="header.label.catalog" bundle="${rb}" /></span>
-        	<fmt:message key="header.label.contact" bundle="${rb}" /></a></h1>
+        <span>
+        	Каталог
+<%--         <fmt:message key="header.label.catalog" bundle="${rb}" /> --%>
+        </span>контактов
+<%--         	<fmt:message key="header.label.contact" bundle="${rb}" /> --%>
+        	</a></h1>
       </div>
   </div>
 </body>

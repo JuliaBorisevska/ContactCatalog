@@ -19,7 +19,7 @@
   <div class="content">
     <div class="content_resize">
     <p class="page-info">Создание/редактирование контакта</p>
-      <form class="contactform" action="${pageContext.request.contextPath}/changeContact.do" name="contactForm" method="post">
+      <form class="contactform"  name="contactForm" enctype="multipart/form-data" method="post">
       <input type="hidden" name="contactId" value="${contact.id}" />
       <input type="hidden" name="image" value="${contact.image}" />
       <div class="left">
@@ -137,7 +137,8 @@
 	<div class="right">
 	
     <div id="popUpDivPhone" style="display:none;">  
-    	<input type="hidden" name="phoneId" value="0" />
+    	<input type="hidden" id="phoneId" name="phoneId" value="0" />
+    	<input type="hidden" id="edit" name="edit" value="0" />
     	<p class="page-info"><span>Создание/редактирование телефона</span></p>
 		<div class="fieldwrapper">
 			<label for="countryCode" class="styled">Код страны:</label>
@@ -162,7 +163,7 @@
 			<div class="thefield">
 				<ul>
 					<c:forEach var="elem" items="${helper.takePhoneTypes()}" varStatus="status">
-					<li><input type="radio" name="phoneType" value="${elem.id}"/>${elem.title}</li>
+					<li><input type="radio" name="phoneType" value="${elem.title}"/>${elem.title}</li>
 					</c:forEach>
 				</ul>
 			</div>
@@ -174,8 +175,8 @@
 			</div>
 		</div>
    		<div class="buttonsdiv" >
-			<input type="submit" name="savePhone" value="Сохранить" id="savebutton" onclick="popup('popUpDivPhone', 450, 600)"/> 
-			<input type="submit" name="cancelPhone" value="Отменить" onclick="popup('popUpDivPhone', 450, 600)"/>
+			<a href="#" onclick="popup('popUpDivPhone', 450, 600); editPhone()"><span>Сохранить</span></a>
+			<a href="#" onclick="popup('popUpDivPhone', 450, 600)"><span>Отменить</span></a>
 		</div>		
 	</div>
 	
@@ -186,7 +187,7 @@
 			</ul>
 		</div>
 		<p class="table-info"><span>Список контактных телефонов</span></p>
-          <table>
+          <table id="phoneTable">
                 <tr>
                     <th>&nbsp;</th>
                     <th>
@@ -205,12 +206,13 @@
                             	<input type="checkbox">
                             </td>
                             <td>
+                            	<input type="hidden" name="phone" value="${elem.id}:${elem.countryCode}:${elem.operatorCode}:${elem.basicNumber}:${elem.type.title}:${elem.userComment}"/>
                   				<c:choose>
 									<c:when test="${elem.userComment!=null}" >
-										<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(${elem.countryCode}, ${elem.operatorCode}, ${elem.basicNumber}, ${elem.type.id}, ${elem.userComment })">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
+										<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(this, ${elem.id}, ${elem.countryCode}, ${elem.operatorCode}, ${elem.basicNumber},'${elem.type.title}', '${elem.userComment }')">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
 									</c:when>
 									<c:otherwise>
-										<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(${elem.countryCode}, ${elem.operatorCode}, ${elem.basicNumber}, ${elem.type.id}, '')">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
+										<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(this, ${elem.id}, ${elem.countryCode}, ${elem.operatorCode}, ${elem.basicNumber},'${elem.type.title}', '')">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
 									</c:otherwise>
 								</c:choose>
                             </td>
@@ -270,6 +272,7 @@
                     </th>
                 </tr>
                 <c:forEach var="elem" items="${contact.attachments}" varStatus="status">
+                	<input type="hidden" name="attachment" value="${elem.id}+${elem.title}+${elem.uploads}+${elem.userComment} " />
                     <tr>
                             <td>
                             	<input type="checkbox">

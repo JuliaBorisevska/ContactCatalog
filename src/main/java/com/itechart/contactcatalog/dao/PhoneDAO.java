@@ -34,7 +34,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
             	phone.setId(rs.getInt(1));
                 phone.setCountryCode(rs.getInt(2));
                 phone.setOperatorCode(rs.getInt(3));
-                phone.setBasicNumber(rs.getInt(4));
+                phone.setBasicNumber(rs.getLong(4));
                 PhoneType type = new PhoneType();
                 type.setId(rs.getInt(5));
                 type.setTitle(rs.getString(8));;
