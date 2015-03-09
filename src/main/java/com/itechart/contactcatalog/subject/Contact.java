@@ -2,11 +2,13 @@ package com.itechart.contactcatalog.subject;
 
 import java.util.List;
 
+import org.joda.time.LocalDate;
+
 public class Contact extends Entity {
 	private String firstName;
 	private String middleName;
 	private String lastName;
-	private String birthDate;
+	private LocalDate birthDate;
 	private String citizenship;
 	private String website;
 	private String email;
@@ -40,10 +42,10 @@ public class Contact extends Entity {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public String getBirthDate() {
+	public LocalDate getBirthDate() {
 		return birthDate;
 	}
-	public void setBirthDate(String birthDate) {
+	public void setBirthDate(LocalDate birthDate) {
 		this.birthDate = birthDate;
 	}
 	public String getCitizenship() {

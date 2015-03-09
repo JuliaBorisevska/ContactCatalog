@@ -11,7 +11,7 @@
 <link href="${pageContext.request.contextPath}/css/edit.css" rel="stylesheet" type="text/css" />
 <script src="${pageContext.request.contextPath}/js/popup.js"  type="text/javascript"></script>
 </head>
-<body onLoad="fillContact('${contact.sex.id}', '${contact.maritalStatus.id}' )">
+<body onLoad="fillContact('${contact.sex.id}', '${contact.maritalStatus.id}' ); convertDate() ">
 <jsp:useBean id="helper" scope="page" class="com.itechart.contactcatalog.helper.ViewHelper" />
 <div class="main">
   <c:import url="header.jsp" />
@@ -19,7 +19,7 @@
   <div class="content">
     <div class="content_resize">
     <p class="page-info">Создание/редактирование контакта</p>
-      <form class="contactform"  name="contactForm" enctype="multipart/form-data" method="post">
+      <form class="contactform"  name="contactForm" action="${pageContext.request.contextPath}/changeContact.do" enctype="multipart/form-data" method="post">
       <input type="hidden" name="contactId" value="${contact.id}" />
       <input type="hidden" name="image" value="${contact.image}" />
       <div class="left">
@@ -29,16 +29,16 @@
       		<div id="popUpDivImage" style="display:none;"> 
       			<p class="page-info"><span>Выбор фото</span></p> 
       			<div id="imageFile">
-      				<input type="file" name="foto" accept="image/*" size="50">
+      				<input type="file" name="photo" id="photo" accept="image/*" size="50">
       			</div>
    				<div class="buttonsdiv" >
-					<input type="submit" name="saveImage" value="Сохранить" id="savebutton" onclick="popup('popUpDivImage', 200, 400)"/> 
-					<input type="submit" name="cancelImage" value="Отменить" onclick="popup('popUpDivImage', 200, 400)"/>
+   					<a href="#" onclick="popup('popUpDivImage', 200, 400)">Сохранить</a>
+					<a href="#" onclick="popup('popUpDivImage', 200, 400); clearPhoto()">Отменить</a>
 				</div>
 			</div>
 			
 			<c:choose>
-				<c:when test="${ contact.image!=null}" >
+				<c:when test="${contact.image!=null}" >
 					<img src="${pageContext.request.contextPath}/${contact.image}" onclick="popup('popUpDivImage', 200, 400)" />
 				</c:when>
 				<c:otherwise>
@@ -138,7 +138,8 @@
 	
     <div id="popUpDivPhone" style="display:none;">  
     	<input type="hidden" id="phoneId" name="phoneId" value="0" />
-    	<input type="hidden" id="edit" name="edit" value="0" />
+    	<input type="hidden" id="editRow" name="editRow" value="0" />
+    	<input type="hidden" id="dateField" name="dateField" value="" />
     	<p class="page-info"><span>Создание/редактирование телефона</span></p>
 		<div class="fieldwrapper">
 			<label for="countryCode" class="styled">Код страны:</label>
@@ -175,15 +176,15 @@
 			</div>
 		</div>
    		<div class="buttonsdiv" >
-			<a href="#" onclick="popup('popUpDivPhone', 450, 600); editPhone()"><span>Сохранить</span></a>
-			<a href="#" onclick="popup('popUpDivPhone', 450, 600)"><span>Отменить</span></a>
+			<a href="#" onclick="popup('popUpDivPhone', 450, 600); editPhone()">Сохранить</a>
+			<a href="#" onclick="popup('popUpDivPhone', 450, 600)">Отменить</a>
 		</div>		
 	</div>
 	
 		<div id="boxtab-blue">
 			<ul>
-				<li class="active"><a href="#"><span>Удалить</span></a></li>
-				<li class="last"><a href="#" onclick="popup('popUpDivPhone', 450, 600)"><span>Создать</span></a></li>
+				<li class="active"><a href="#" onclick="deleteRow('phoneTable')"><span>Удалить</span></a></li>
+				<li class="last"><a href="#" onclick="popup('popUpDivPhone', 450, 600); clearFields()"><span>Создать</span></a></li>
 			</ul>
 		</div>
 		<p class="table-info"><span>Список контактных телефонов</span></p>
@@ -202,67 +203,55 @@
                 </tr>
                 <c:forEach var="elem" items="${contact.phones}" varStatus="status">
                     <tr>
+                            <td><input type="checkbox"></td>
                             <td>
-                            	<input type="checkbox">
+                            	<input type="hidden" name="phone" value="${elem.id}:${elem.countryCode}:${elem.operatorCode}:${elem.basicNumber}:${elem.type.title}:${elem.userComment}" >
+								<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(this)">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
                             </td>
-                            <td>
-                            	<input type="hidden" name="phone" value="${elem.id}:${elem.countryCode}:${elem.operatorCode}:${elem.basicNumber}:${elem.type.title}:${elem.userComment}"/>
-                  				<c:choose>
-									<c:when test="${elem.userComment!=null}" >
-										<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(this, ${elem.id}, ${elem.countryCode}, ${elem.operatorCode}, ${elem.basicNumber},'${elem.type.title}', '${elem.userComment }')">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
-									</c:when>
-									<c:otherwise>
-										<a href="#" class="name" onclick="popup('popUpDivPhone', 450, 600); fillPhone(this, ${elem.id}, ${elem.countryCode}, ${elem.operatorCode}, ${elem.basicNumber},'${elem.type.title}', '')">+${elem.countryCode} (${elem.operatorCode}) ${elem.basicNumber}</a>
-									</c:otherwise>
-								</c:choose>
-                            </td>
-                            <td>
-                                ${elem.type.title} 
-                            </td>
-                            <td>
-                                ${elem.userComment}
-                            </td>
+                            <td> ${elem.type.title} </td>
+                            <td>${elem.userComment}</td>
                     </tr>
                 </c:forEach>
             </table>
 		<br/><br/><br/>
 		
 		<div id="popUpDivAttach" style="display:none;">  
-			<input type="hidden" name="attachId" value="0" />
+			<input type="hidden" name="attachId"  id="attachId" value="0" />
+			<input type="hidden" id="editAttach" name="editAttach" value="0" />
     		<p class="page-info"><span>Создание/редактирование присоединений</span></p>
 			<div class="fieldwrapper">
-				<label for="attachName" class="styled">Имя файла:</label>
+				<label for="attachName" class="styled">Название:</label>
 				<div class="thefield">
 					<input type="text" id="attachName" name="attachName" value="" /><br />
 				</div>
 			</div>
 			<div class="fieldwrapper">
-			<label for="attachComment" class="styled">Коментарий:</label>
-			<div class="thefield">
-				<textarea name="attachComment" ></textarea>
+				<label for="attachComment" class="styled">Коментарий:</label>
+				<div class="thefield">
+					<textarea name="attachComment" ></textarea>
+				</div>
 			</div>
-			</div>
-			<div>
-      			<input type="file" name="attach" accept="image/*" size="50">
+			<div id="attachFileDiv">
+      			<input type="file" name="attach" id="attach"  size="50">
       		</div>
    		<div class="buttonsdiv" >
-			<input type="submit" name="saveAttach" value="Сохранить" id="savebutton" onclick="popup('popUpDivAttach', 300, 600)"/> 
-			<input type="submit" name="cancelAttach" value="Отменить" onclick="popup('popUpDivAttach', 300, 600)"/>
+   			<a href="#" onclick="popup('popUpDivAttach', 300, 600); editAttach()">Сохранить</a>
+			<a href="#" onclick="popup('popUpDivAttach', 300, 600)">Отменить</a>
 		</div>
 		</div>
 		
 		<div id="boxtab-blue">
 			<ul>
-				<li class="active"><a href="#"><span>Удалить</span></a></li>
-				<li class="last"><a href="#" onclick="popup('popUpDivAttach', 300, 600)"><span>Создать</span></a></li>
+				<li class="active"><a href="#" onclick="deleteRow('attachTable')"><span>Удалить</span></a></li>
+				<li class="last"><a href="#" onclick="popup('popUpDivAttach', 300, 600); clearAttach()"><span>Создать</span></a></li>
 			</ul>
 		</div>
 		<p class="table-info"><span>Список присоединений</span></p>
-          <table>
+          <table id="attachTable">
                 <tr>
                     <th>&nbsp;</th>
                     <th>
-                        Имя файла
+                        Название
                     </th>
                     <th>
                         Дата загрузки
@@ -272,20 +261,14 @@
                     </th>
                 </tr>
                 <c:forEach var="elem" items="${contact.attachments}" varStatus="status">
-                	<input type="hidden" name="attachment" value="${elem.id}+${elem.title}+${elem.uploads}+${elem.userComment} " />
                     <tr>
+                            <td><input type="checkbox"></td>
                             <td>
-                            	<input type="checkbox">
+                            	<input type="hidden" name="attachment" value="${elem.id}#${elem.title}#${elem.uploads.toString('yyyy-MM-dd-HH-mm-ss')}#${elem.userComment}">
+                            	<a href="#" class="name" onclick="popup('popUpDivAttach', 300, 600); fillAttach(this)">${elem.title}</a>
                             </td>
-                            <td>
-                            	<a href="#" class="name" onclick="popup('popUpDivAttach', 300, 600)">${elem.title}</a>
-                            </td>
-                            <td>
-                                ${elem.uploads} 
-                            </td>
-                            <td>
-                                ${elem.userComment} 
-                            </td>
+                            <td>${elem.uploads.toString("yyyy-MM-dd-HH-mm-ss")}</td>
+                            <td>${elem.userComment}</td>
                     </tr>
                 </c:forEach>
             </table>

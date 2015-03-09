@@ -1,6 +1,7 @@
 package com.itechart.contactcatalog.logic;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import org.slf4j.Logger;
@@ -20,6 +21,40 @@ import com.itechart.contactcatalog.subject.Phone;
 public class ContactService {
 
 	private static Logger logger = LoggerFactory.getLogger(ContactService.class);
+	
+	
+	public static void changeContact(Contact contact) throws ServiceException{
+		logger.debug("Start of changeContact");
+		Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection();
+            conn.setAutoCommit(false);
+            ContactDAO contactDAO = new ContactDAO(conn);
+            PhoneDAO phoneDAO = new PhoneDAO(conn);
+            AttachmentDAO attachmentDAO = new AttachmentDAO(conn);
+            
+            
+            
+            conn.commit();
+        } catch (ConnectionPoolException | DAOException | SQLException e) {
+        	try {
+                if(conn!=null) {
+                    conn.rollback();
+                }
+            } catch (SQLException e1) {
+                logger.error("Rollback error in changeContact: {}", e1);
+            }
+        	throw new ServiceException(e);
+        } finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in changeContact: {} ", e);
+			}
+        }
+	}
+	
+	
 	
 	public static ArrayList<Contact> receiveContacts() throws ServiceException {
 		logger.debug("Start of receiveContacts");

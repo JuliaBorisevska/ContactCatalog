@@ -49,7 +49,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	  
 	  @Override
 	public Object getAttribute(String name) {
-		// TODO Auto-generated method stub
 		return super.getAttribute(name);
 	}
 
@@ -57,7 +56,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 
 	@Override
 	public Enumeration<String> getAttributeNames() {
-		// TODO Auto-generated method stub
 		return super.getAttributeNames();
 	}
 
@@ -128,7 +126,7 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	  }
 	  
 	  /**
-	  * Return a {@code Map<String, List<String>>} for all regular parameters.
+	  * Return a {@code Map<String, String[]} for all regular parameters.
 	  * Does not return any file upload parameters at all. 
 	  */
 	  @Override 

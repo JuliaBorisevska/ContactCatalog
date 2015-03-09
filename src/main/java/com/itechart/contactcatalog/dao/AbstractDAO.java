@@ -2,6 +2,7 @@ package com.itechart.contactcatalog.dao;
 
 import java.sql.Connection;
 
+import com.itechart.contactcatalog.exception.DAOException;
 import com.itechart.contactcatalog.subject.Entity;
 
 public abstract class AbstractDAO <T extends Entity> {
@@ -11,8 +12,8 @@ public abstract class AbstractDAO <T extends Entity> {
         this.connection = connection;
     }
 	
-	public abstract boolean delete(T entity);
-	public abstract boolean create(T entity);
-	public abstract boolean update(T entity);
+	public abstract void delete(T entity) throws DAOException;
+	public abstract int create(T entity) throws DAOException;
+	public abstract void update(T entity) throws DAOException;
 
 }

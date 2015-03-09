@@ -1,6 +1,7 @@
 package com.itechart.contactcatalog.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,12 +18,43 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 	private static Logger logger = LoggerFactory.getLogger(PhoneDAO.class);
 	
 	private final static String SQL_SELECT_PHONE_TYPES="SELECT id, title FROM phone_type";
+	private final static String SQL_SELECT_TYPE_ID="SELECT id FROM phone_type WHERE title=?";
 	private final static String SQL_SELECT_CONTACT_PHONES="SELECT phone.*, phone_type.title FROM phone JOIN contact ON phone.contact_id=contact.id JOIN phone_type ON phone.phone_type_id=phone_type.id WHERE contact.id=?";
-
+	private final static String SQL_PHONE_UPDATE = "UPDATE phone SET country_code=?, operator_code=?, basic_number=?, phone_type_id=?, user_comment=? WHERE id=?";
+	private final static String SQL_PHONE_DELETE="DELETE FROM phone WHERE id=?";
+	private final static String SQL_PHONE_INSERT = "INSERT INTO phone (country_code, operator_code, basic_number, phone_type_id, user_comment, contact_id) VALUES (?, ?, ?, ?, ?, ?)";
+	private final static String SQL_SELECT_PHONE_FOR_DELETE_TEMPLATE = "SELECT id FROM phone WHERE id NOT IN (%s) AND contact_id=?";
+	
 	public PhoneDAO(Connection connection) {
 		super(connection);
 	}
 
+	public ArrayList<Phone> takeContactPhonesForDelete(ArrayList<Phone> ph) throws DAOException {
+		logger.debug("Start takeContactPhonesForDelete method");
+		ArrayList<Phone> phones = new ArrayList<>();
+		StringBuilder sb = new StringBuilder();
+		for (int i=0; i< ph.size()-1; i++){
+			sb.append(ph.get(i).getId());
+			sb.append(",");
+		}
+		sb.append(ph.get(ph.size()-1).getId());
+		String statement = String.format(SQL_SELECT_PHONE_FOR_DELETE_TEMPLATE, sb.toString());
+		logger.debug(statement);
+        try(PreparedStatement ps=connection.prepareStatement(statement)) {
+        	ps.setInt(1, ph.get(0).getContact().getId());
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+            	Phone phone = new Phone();
+            	phone.setId(rs.getInt(1));
+                phones.add(phone);
+            }
+        } catch (SQLException e) {
+        	logger.error("Exception in takeContactPhonesForDelete: {} ", e);
+            throw new DAOException("Database error during takeContactPhonesForDelete.");
+        }
+        return phones;
+    }
+	
 	public ArrayList<Phone> takeContactPhones(int contactId) throws DAOException {
 		logger.debug("Start takeContactPhones method");
 		ArrayList<Phone> phones = new ArrayList<>();
@@ -67,22 +99,64 @@ public class PhoneDAO extends AbstractDAO<Phone> {
         return phoneTypes;
     }
 	
+	public Integer takePhoneTypeId(String title) throws DAOException {
+		logger.debug("Start takePhoneTypeId method");
+        try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_TYPE_ID)) {
+        	ps.setString(1, title);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return Integer.valueOf(rs.getInt(1));
+        } catch (SQLException e) {
+        	logger.error("Exception in takePhoneTypes: {} ", e);
+            throw new DAOException("Database error during phone type id taking.");
+        }
+    }
+	
 	@Override
-	public boolean delete(Phone entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public void delete(Phone entity) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_DELETE)) {
+            ps.setInt(1, entity.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+        	logger.error("Exception in delete: {}", e);
+            throw new DAOException("Database error during phone deleting.");
+        }
+
 	}
 
 	@Override
-	public boolean create(Phone entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public int create(Phone entity) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_INSERT)) {
+			ps.setInt(1, entity.getCountryCode());
+			ps.setInt(2, entity.getOperatorCode());
+			ps.setLong(3, entity.getBasicNumber());
+			ps.setInt(4, entity.getType().getId());
+			ps.setString(5, entity.getUserComment());
+			ps.setInt(6, entity.getContact().getId());
+            int result = ps.executeUpdate();
+            logger.debug("Inserted row: {}", result);
+            return result;
+        } catch (SQLException e) {
+        	logger.error("Exception in create: {}", e);
+            throw new DAOException("Database error during phone creating.");
+        }
+
 	}
 
 	@Override
-	public boolean update(Phone entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public void update(Phone entity) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_UPDATE)) {
+			ps.setInt(1, entity.getCountryCode());
+			ps.setInt(2, entity.getOperatorCode());
+			ps.setLong(3, entity.getBasicNumber());
+			ps.setInt(4, entity.getType().getId());
+			ps.setString(5, entity.getUserComment());
+			ps.setInt(6, entity.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+        	logger.error("Exception in update: {}", e);
+            throw new DAOException("Database error during phone update");
+        }
 	}
 
 }

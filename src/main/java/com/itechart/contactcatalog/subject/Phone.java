@@ -6,6 +6,7 @@ public class Phone extends Entity {
 	private Long basicNumber;
 	private PhoneType type; 
 	private String userComment;
+	private Contact contact;
 	
 	public Phone() {
 	}
@@ -49,7 +50,14 @@ public class Phone extends Entity {
 	public void setType(PhoneType type) {
 		this.type = type;
 	}
-	
+
+	public Contact getContact() {
+		return contact;
+	}
+
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
 	
 	
 }

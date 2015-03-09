@@ -1,10 +1,13 @@
 package com.itechart.contactcatalog.subject;
 
+import org.joda.time.LocalDateTime;
+
 public class Attachment extends Entity {
 	private String title;
 	private String path;
-	private String uploads;
+	private LocalDateTime uploads;
 	private String userComment;
+	private Contact contact;
 	
 	public Attachment() {
 	}
@@ -17,11 +20,11 @@ public class Attachment extends Entity {
 		this.title = title;
 	}
 
-	public String getUploads() {
+	public LocalDateTime getUploads() {
 		return uploads;
 	}
 
-	public void setUploads(String uploads) {
+	public void setUploads(LocalDateTime uploads) {
 		this.uploads = uploads;
 	}
 
@@ -40,8 +43,14 @@ public class Attachment extends Entity {
 	public void setPath(String path) {
 		this.path = path;
 	}
-	
-	
+
+	public Contact getContact() {
+		return contact;
+	}
+
+	public void setContact(Contact contact) {
+		this.contact = contact;
+	}
 	
 
 }

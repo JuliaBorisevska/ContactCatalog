@@ -1,11 +1,13 @@
 package com.itechart.contactcatalog.dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,6 +24,9 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	private final static String SQL_SELECT_CONTACT_BY_ID="SELECT * FROM contact WHERE id=?";
 	private final static String SQL_SELECT_SEX_LIST="SELECT id, title FROM sex";
 	private final static String SQL_SELECT_MARITAL_STATUS_LIST="SELECT id, title FROM marital_status";
+	private final static String SQL_CONTACT_UPDATE ="UPDATE contact SET first_name=?, last_name=?, midle_name=?, birth_date=?, sex_id=?, marital_status_id=?, citizenship=?, website=?, email=?, image=?, company=?, country=?, town=?, street=?, house=?, flat=?, index_value=? WHERE id=?";
+	private final static String SQL_CONTACT_INSERT = "INSERT INTO contact (first_name, last_name, midle_name, birth_date, sex_id, marital_status_id, citizenship, website, email, image, company, country, town, street, house, flat, index_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private final static String SQL_CONTACT_DELETE="DELETE FROM contact WHERE id=?";
 	
 	
 	public ContactDAO(Connection connection) {
@@ -39,7 +44,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
                 contact.setFirstName(rs.getString(2));
                 contact.setLastName(rs.getString(3));
                 contact.setMiddleName(rs.getString(4));
-                contact.setBirthDate(rs.getString(5));
+                contact.setBirthDate(LocalDate.fromDateFields(rs.getDate(5)));
                 Sex sex = new Sex();
                 sex.setId(rs.getString(6).charAt(0));
                 contact.setSex(sex);
@@ -49,8 +54,8 @@ public class ContactDAO extends AbstractDAO<Contact> {
                 contact.setCitizenship(rs.getString(8));
                 contact.setWebsite(rs.getString(9));
                 contact.setEmail(rs.getString(10));
-                contact.setCompany(rs.getString(11));
-                contact.setImage(rs.getString(12));
+                contact.setCompany(rs.getString(12));
+                contact.setImage(rs.getString(11));
                 Address address = new Address();
                 address.setCountry(rs.getString(13));
                 address.setTown(rs.getString(14));
@@ -80,7 +85,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
                 contact.setFirstName(rs.getString(2));
                 contact.setLastName(rs.getString(3));
                 contact.setMiddleName(rs.getString(4));
-                contact.setBirthDate(rs.getString(5));
+                contact.setBirthDate(LocalDate.fromDateFields(rs.getDate(5)));
                 contact.setCompany(rs.getString(6));
                 Address address = new Address();
                 address.setCountry(rs.getString(7));
@@ -136,21 +141,76 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	
 
 	@Override
-	public boolean delete(Contact entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public void delete(Contact entity) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_DELETE)) {
+            ps.setInt(1, entity.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+        	logger.error("Exception in delete: {}", e);
+            throw new DAOException("Database error during contact deleting.");
+        }
+
 	}
 
 	@Override
-	public boolean create(Contact entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public int create(Contact entity) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_INSERT)) {
+			ps.setString(1, entity.getFirstName());
+			ps.setString(2, entity.getLastName());
+			ps.setString(3, entity.getMiddleName());
+			ps.setDate(4, new Date(entity.getBirthDate().toDateTimeAtStartOfDay().getMillis()));
+			ps.setString(5, String.valueOf(entity.getSex().getId()));
+			ps.setInt(6, entity.getMaritalStatus().getId());
+			ps.setString(7, entity.getCitizenship());
+			ps.setString(8, entity.getWebsite());
+			ps.setString(9, entity.getEmail());
+			ps.setString(10, entity.getImage());
+			ps.setString(11, entity.getCompany());
+			ps.setString(12, entity.getAddress().getCountry());
+			ps.setString(13, entity.getAddress().getTown());
+			ps.setString(14, entity.getAddress().getStreet());
+			ps.setInt(15, entity.getAddress().getHouse());
+			ps.setInt(16, entity.getAddress().getFlat());
+			ps.setObject(17, entity.getAddress().getIndexValue());
+            int result = ps.executeUpdate();
+            logger.debug("Inserted row: {}", result);
+            return result;
+        } catch (SQLException e) {
+        	logger.error("Exception in create: {}", e);
+            throw new DAOException("Database error during contact creating.");
+        }
+
 	}
 
 	@Override
-	public boolean update(Contact entity) {
-		// TODO Auto-generated method stub
-		return false;
+	public void update(Contact entity) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_UPDATE)) {
+			ps.setString(1, entity.getFirstName());
+			ps.setString(2, entity.getLastName());
+			ps.setString(3, entity.getMiddleName());
+			ps.setDate(4, new Date(entity.getBirthDate().toDateTimeAtStartOfDay().getMillis()));
+			ps.setString(5, String.valueOf(entity.getSex().getId()));
+			ps.setInt(6, entity.getMaritalStatus().getId());
+			ps.setString(7, entity.getCitizenship());
+			ps.setString(8, entity.getWebsite());
+			ps.setString(9, entity.getEmail());
+			ps.setString(10, entity.getImage());
+			ps.setString(11, entity.getCompany());
+			ps.setString(12, entity.getAddress().getCountry());
+			ps.setString(13, entity.getAddress().getTown());
+			ps.setString(14, entity.getAddress().getStreet());
+			ps.setInt(15, entity.getAddress().getHouse());
+			ps.setInt(16, entity.getAddress().getFlat());
+			ps.setObject(17, entity.getAddress().getIndexValue());
+			ps.setInt(18, entity.getId());
+            int result  = ps.executeUpdate();
+            logger.debug("Row: {}", result);
+
+        } catch (SQLException e) {
+        	logger.error("Exception in update: {}", e);
+            throw new DAOException("Database error during contact update");
+        }
+
 	}
 	
 	
