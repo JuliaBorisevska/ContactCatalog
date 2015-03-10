@@ -9,11 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itechart.contactcatalog.controller.ContactServlet;
+import com.itechart.contactcatalog.exception.ServiceException;
+import com.itechart.contactcatalog.exception.UploadException;
 
 public class FileUploadService {
 	private static Logger logger = LoggerFactory.getLogger(FileUploadService.class);
 	// location to store file uploaded
-    private static final String UPLOAD_DIRECTORY = "upload";
+    private static final String ATTACHMENT_UPLOAD_DIRECTORY = "upload";
+    private static final String PHOTO_UPLOAD_DIRECTORY = "images";
+    
+    private static final String PHOTO_FILE_INPUT = "photo";
  
     // upload settings
     private static final int MEMORY_THRESHOLD   = 1024 * 1024 * 3;  // 3MB
@@ -21,12 +26,8 @@ public class FileUploadService {
     private static final int MAX_REQUEST_SIZE   = 1024 * 1024 * 50; // 50MB
  
     
-    public static void uploadFile(FileItem item, String fileName){
+    public static void uploadFile(FileItem item, String fileName) throws UploadException{
     	
-    	byte[] fileBytes = item.get();
-    	if (fileBytes.length==0){
-    		return;
-    	}
     	// configures upload settings
     	DiskFileItemFactory factory = new DiskFileItemFactory();
     	// sets memory threshold - beyond which files are stored in disk
@@ -44,7 +45,12 @@ public class FileUploadService {
 
     	// constructs the directory path to store upload file
     	// this path is relative to application's directory
-    	String uploadPath = ContactServlet.getPrefix()  + File.separator + UPLOAD_DIRECTORY;
+    	String uploadPath;
+    	if (PHOTO_FILE_INPUT.equals(item.getFieldName())){
+    		uploadPath = ContactServlet.getPrefix()  + File.separator + PHOTO_UPLOAD_DIRECTORY;
+    	}else{
+    		uploadPath = ContactServlet.getPrefix()  + File.separator + ATTACHMENT_UPLOAD_DIRECTORY;
+    	}
     	logger.debug("uploadPath: {}", uploadPath);
     	// creates the directory if it does not exist
     	File uploadDir = new File(uploadPath);
@@ -52,19 +58,14 @@ public class FileUploadService {
     		uploadDir.mkdir();
     	}
     	try {
-    		//String fileName = new File(item.getName()).getName();
     		String filePath = uploadPath + File.separator + fileName;
     		File storeFile = new File(filePath);
-    		// saves the file on disk
     		item.write(storeFile);
-    		//request.setAttribute("message","Upload has been done successfully!");
     				
     	} catch (Exception ex) {
-    		logger.error("Error in uploadFile: {}", ex);
-    		//request.setAttribute("message","There was an error: " + ex.getMessage());
+    		logger.error("Error in uploadFile {}: {}", fileName, ex);
+    		throw new UploadException("Error in uploadFile");
     	}
-    	// redirects client to message page
-    	//getServletContext().getRequestDispatcher("/message.jsp").forward(request, response);
     }
     
     public static String getFileExtention(String fullPath){

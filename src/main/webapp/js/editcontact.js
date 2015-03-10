@@ -46,14 +46,14 @@ function convertDate(){
 	for(var i=1;i<rowCount;i++){
 		var row=table.rows[i];
 		var elems = document.getElementById('attachTable').rows[i].cells[1].getElementsByTagName('INPUT');
-		alert(elems[0].value);
+		//alert(elems[0].value);
 		var str=elems[0].value;
 		var arr = str.split('#');
 		var dateTime = arr[2].split('-');
-		var date = new Date(dateTime[0], dateTime[1], dateTime[2], dateTime[3], dateTime[4], dateTime[5]);
-		alert(date.getTimezoneOffset()/60);
+		var date = new Date(dateTime[0], dateTime[1]-1, dateTime[2], dateTime[3], dateTime[4], dateTime[5]);
+		//alert(date.getTimezoneOffset()/60);
 		date.setHours(+date.getHours()-date.getTimezoneOffset()/60);
-		var now = date.getFullYear()+"-"+('0' + (date.getMonth())).slice(-2)+"-"+('0' + date.getDate()).slice(-2)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+		var now = date.getFullYear()+"-"+('0' + (date.getMonth()+1)).slice(-2)+"-"+('0' + date.getDate()).slice(-2)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 		row.cells[2].innerText = now;
 		
 	}
@@ -72,7 +72,9 @@ function editAttach(){
 	var i;
 	if (document.getElementById('editAttach').value==0){
 		now = date.getFullYear()+"-"+('0' + (date.getMonth() + 1)).slice(-2)+"-"+('0' + date.getDate()).slice(-2)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+		alert(now);
 		utcDate = date.getUTCFullYear()+"-"+('0' + (date.getUTCMonth() + 1)).slice(-2)+"-"+('0' + date.getUTCDate()).slice(-2)+"-"+date.getUTCHours()+"-"+date.getUTCMinutes()+"-"+date.getUTCSeconds();
+		alert(tcDate);
 		i =tableRows.length;
 		var row=htmlTable.insertRow(i);
 		var colCount=tableRows[0].cells.length;

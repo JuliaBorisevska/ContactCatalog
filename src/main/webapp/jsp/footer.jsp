@@ -10,7 +10,7 @@
 <body>
 <div class="fbg">
     <div class="footer">
-      <p class="lr">&copy; Julia Borisevska. All Rights Reserved</p>
+      <p class="lr">&copy; Julia Borisevska</p>
       <div class="clr"></div>
     </div>
 </div>

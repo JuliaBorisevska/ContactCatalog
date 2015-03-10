@@ -5,6 +5,7 @@ body {
 	width:100%;
 	color:#9a9a9a;
 	font:normal 12px/1.8em Arial, Helvetica, sans-serif;
+	
 }
 html, .main {
 	padding:0;
@@ -167,7 +168,7 @@ ul.sb_menu li input:focus,ul.sb_menu li a:focus {
    }
 .article  TD, TH {
     padding: 3px; 
-    text-align: center;
+    text-align: left;
    }
 .article   TH {
     text-align: center;

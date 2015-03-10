@@ -24,6 +24,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 	private final static String SQL_PHONE_DELETE="DELETE FROM phone WHERE id=?";
 	private final static String SQL_PHONE_INSERT = "INSERT INTO phone (country_code, operator_code, basic_number, phone_type_id, user_comment, contact_id) VALUES (?, ?, ?, ?, ?, ?)";
 	private final static String SQL_SELECT_PHONE_FOR_DELETE_TEMPLATE = "SELECT id FROM phone WHERE id NOT IN (%s) AND contact_id=?";
+	private final static String SQL_DELETE_ALL_CONTACT_PHONES = "DELETE FROM phone WHERE contact_id=?";
 	
 	public PhoneDAO(Connection connection) {
 		super(connection);
@@ -112,6 +113,17 @@ public class PhoneDAO extends AbstractDAO<Phone> {
         }
     }
 	
+	public void deleteByContact(int contactId) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_DELETE_ALL_CONTACT_PHONES)) {
+            ps.setInt(1, contactId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+        	logger.error("Exception in delete: {}", e);
+            throw new DAOException("Database error during phone deleting.");
+        }
+	}
+	
+	
 	@Override
 	public void delete(Phone entity) throws DAOException {
 		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_DELETE)) {
@@ -126,14 +138,19 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 
 	@Override
 	public int create(Phone entity) throws DAOException {
-		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_INSERT)) {
+		int result = 0;
+		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
 			ps.setInt(1, entity.getCountryCode());
 			ps.setInt(2, entity.getOperatorCode());
 			ps.setLong(3, entity.getBasicNumber());
 			ps.setInt(4, entity.getType().getId());
 			ps.setString(5, entity.getUserComment());
 			ps.setInt(6, entity.getContact().getId());
-            int result = ps.executeUpdate();
+			ps.executeUpdate();
+			ResultSet rs = ps.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                result = rs.getInt(1);
+            }
             logger.debug("Inserted row: {}", result);
             return result;
         } catch (SQLException e) {

@@ -3,7 +3,10 @@ package com.itechart.contactcatalog.logic;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +16,7 @@ import com.itechart.contactcatalog.dao.PhoneDAO;
 import com.itechart.contactcatalog.exception.ConnectionPoolException;
 import com.itechart.contactcatalog.exception.DAOException;
 import com.itechart.contactcatalog.exception.ServiceException;
+import com.itechart.contactcatalog.exception.UploadException;
 import com.itechart.contactcatalog.pool.ConnectionPool;
 import com.itechart.contactcatalog.subject.Attachment;
 import com.itechart.contactcatalog.subject.Contact;
@@ -22,8 +26,9 @@ public class ContactService {
 
 	private static Logger logger = LoggerFactory.getLogger(ContactService.class);
 	
+	private static final String ATTACHMENT_FILE_INPUT = "attach";
 	
-	public static void changeContact(Contact contact) throws ServiceException{
+	public static void changeContact(Contact contact, List<FileItem> items) throws ServiceException{
 		logger.debug("Start of changeContact");
 		Connection conn = null;
         try {
@@ -32,18 +37,87 @@ public class ContactService {
             ContactDAO contactDAO = new ContactDAO(conn);
             PhoneDAO phoneDAO = new PhoneDAO(conn);
             AttachmentDAO attachmentDAO = new AttachmentDAO(conn);
+            if (contact.getId()==null){
+            	int newContactId = contactDAO.create(contact);
+            	contact.setId(newContactId);
             
-            
-            
+            }else{
+            	contactDAO.update(contact);
+            	
+            }
+            //ArrayList<Phone> phonesInsert = new ArrayList<>();
+            //ArrayList<Phone> phonesUpdate = new ArrayList<>();
+            if (contact.getPhones().size()!=0){
+            	for (Phone phone : contact.getPhones()){
+            		Integer phoneTypeId = phoneDAO.takePhoneTypeId(phone.getType().getTitle());
+            		phone.getType().setId(phoneTypeId);
+            		if (phone.getId()==0){
+            			int phId=phoneDAO.create(phone);
+            			phone.setId(phId);
+            			logger.debug("New phone id: {}, compare: {}", phId, phone.getId());
+            		}else{
+            			phoneDAO.update(phone);
+            			//phonesUpdate.add(phone);
+            		}
+            	}
+            	ArrayList<Phone> phonesDelete;
+            	phonesDelete = phoneDAO.takeContactPhonesForDelete((ArrayList<Phone>)contact.getPhones());
+            	for (Phone phone : phonesDelete){
+            		phoneDAO.delete(phone);
+            	}
+            }else{
+            	phoneDAO.deleteByContact(contact.getId());
+            }
+            	
+            FileItem photoItem = items.get(0);
+            byte[] fileBytes = photoItem.get();
+        	if (fileBytes.length!=0){
+        		String imageName =photoItem.getName();
+    			String ext = FileUploadService.getFileExtention(imageName);
+    			contact.setImage(contact.getId()+ext);
+    			FileUploadService.uploadFile(photoItem, contact.getImage());
+    			contactDAO.updateImage(contact);
+        	}
+            int index = 2;
+            if (contact.getAttachments().size()!=0){
+            	for (Attachment attachment : contact.getAttachments()){
+            		if (attachment.getId()==0){
+            			FileItem item = items.get(index);
+            			byte[] bytes = item.get();
+                    	if (fileBytes.length!=0){
+                    		int attId=attachmentDAO.create(attachment);
+                    		attachment.setId(attId);
+                    		logger.debug("New attachment id: {}, compare: {}", attId, attachment.getId());
+                    		logger.debug("Field of file field name: {}", item.getFieldName());
+                    		String fileName =item.getName();
+                    		String ext = FileUploadService.getFileExtention(fileName);
+                    		attachment.setPath(attachment.getId()+ext);
+                    		FileUploadService.uploadFile(item, attachment.getPath());
+                    		attachmentDAO.updatePath(attachment);
+                    	}
+                		index++;
+            		}else{
+            			attachmentDAO.update(attachment);
+            		}
+            	}
+            	ArrayList<Attachment> attachsDelete = attachmentDAO.takeAttachmentsForDelete((ArrayList<Attachment>)contact.getAttachments());
+            	for (Attachment attach : attachsDelete){
+            		attachmentDAO.delete(attach);
+            	}
+            }else{
+            	attachmentDAO.deleteByContact(contact.getId());
+            }         
             conn.commit();
-        } catch (ConnectionPoolException | DAOException | SQLException e) {
+        } catch (ConnectionPoolException | DAOException | SQLException | UploadException e) {
         	try {
                 if(conn!=null) {
+                	logger.debug("Rollback in changeContact");
                     conn.rollback();
                 }
             } catch (SQLException e1) {
                 logger.error("Rollback error in changeContact: {}", e1);
             }
+        	logger.error("Exception in changeContact: {} ", e);
         	throw new ServiceException(e);
         } finally {
         	try {
@@ -73,6 +147,27 @@ public class ContactService {
 				ConnectionPool.getInstance().returnConnection(conn);
 			} catch (ConnectionPoolException e) {
 				logger.error("Exception in receiveContacts: {} ", e);
+			}
+        }
+    }
+	
+	public static ArrayList<Contact> findContacts(Contact contact, LocalDate more, LocalDate less) throws ServiceException {
+		logger.debug("Start of findContacts");
+        Connection conn = null;
+        ArrayList<Contact> contacts = new ArrayList<Contact>();
+        try {
+            conn = ConnectionPool.getInstance().getConnection();
+            ContactDAO dao = new ContactDAO(conn);
+            contacts = dao.findContacts(contact, more, less);
+            return contacts;
+        } catch (ConnectionPoolException | DAOException e) {
+        	logger.error("Exception in findContacts: {} ", e);
+			throw new ServiceException(e);
+		} finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in findContacts: {} ", e);
 			}
         }
     }

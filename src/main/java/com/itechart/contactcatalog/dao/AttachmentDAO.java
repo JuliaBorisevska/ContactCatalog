@@ -23,9 +23,11 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 	
 	private final static String SQL_SELECT_CONTACT_ATTACHMENTS="SELECT attachment.* FROM attachment JOIN contact ON attachment.contact_id=contact.id WHERE contact.id=?";
 	private final static String SQL_ATTACHMENT_UPDATE="UPDATE attachment SET title=?, user_comment=? WHERE id=?"; 
+	private final static String SQL_ATTACHMENT_UPDATE_PATH="UPDATE attachment SET path=? WHERE id=?"; 
 	private final static String SQL_ATTACHMENT_DELETE="DELETE FROM attachment WHERE id=?";
 	private final static String SQL_ATTACHMENT_INSERT = "INSERT INTO attachment (title, path, upload_date, user_comment, contact_id) VALUES (?, ?, ?, ?, ?)";
 	private final static String SQL_SELECT_ATTACHMENT_FOR_DELETE_TEMPLATE = "SELECT id FROM attachment WHERE id NOT IN (%s) AND contact_id=?";
+	private final static String SQL_DELETE_ALL_CONTACT_ATTACHMENTS = "DELETE FROM attachment WHERE contact_id=?";
 	
 	public AttachmentDAO(Connection connection) {
 		super(connection);
@@ -81,11 +83,20 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
         return attachments;
     }
 	
-	
+	public void deleteByContact(int contactId) throws DAOException {
+		try(PreparedStatement ps=connection.prepareStatement(SQL_DELETE_ALL_CONTACT_ATTACHMENTS)) {
+            ps.setInt(1, contactId);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+        	logger.error("Exception in delete: {}", e);
+            throw new DAOException("Database error during attachment deleting.");
+        }
+	}
 	
 	
 	@Override
 	public void delete(Attachment entity) throws DAOException {
+		logger.debug("Start delete method");
 		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_DELETE)) {
             ps.setInt(1, entity.getId());
             ps.executeUpdate();
@@ -98,13 +109,19 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 
 	@Override
 	public int create(Attachment entity) throws DAOException {
-		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_INSERT)) {
+		logger.debug("Start create method");
+		int result = 0;
+		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
 			ps.setString(1, entity.getTitle());
 			ps.setString(2, entity.getPath());
 			ps.setTimestamp(3,new Timestamp(entity.getUploads().toDateTime().getMillis()));
-			ps.setString(5, entity.getUserComment());
-			ps.setInt(6, entity.getContact().getId());
-            int result = ps.executeUpdate();
+			ps.setString(4, entity.getUserComment());
+			ps.setInt(5, entity.getContact().getId());
+			ps.executeUpdate();
+			ResultSet rs = ps.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                result = rs.getInt(1);
+            }
             logger.debug("Inserted row: {}", result);
             return result;
         } catch (SQLException e) {
@@ -113,9 +130,23 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
         }
 
 	}
+	
+	
+	public void updatePath(Attachment entity) throws DAOException{
+		logger.debug("Start updatePath method");
+		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_UPDATE_PATH)) {
+			ps.setString(1,entity.getPath());
+			ps.setInt(2, entity.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+        	logger.error("Exception in updatePath: {}", e);
+            throw new DAOException("Database error during attachment path update");
+        }
+	}
 
 	@Override
 	public void update(Attachment entity) throws DAOException {
+		logger.debug("Start update method");
 		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_UPDATE)) {
 			ps.setString(1,entity.getTitle());
 			ps.setString(2, entity.getUserComment());

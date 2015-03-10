@@ -2,9 +2,9 @@
 <application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns="http://www.example.com/application">
     <action>
-        <title>createContact.do</title>
-        <class>com.itechart.contactcatalog.command.ContactCreationCommand</class>
-        <jsp>/jsp/contact.jsp</jsp>
+        <title>findContacts.do</title>
+        <class>com.itechart.contactcatalog.command.SearchContactCommand</class>
+        <jsp>/index.jsp</jsp>
     </action>
     <action>
         <title>editContact.do</title>
@@ -14,7 +14,7 @@
     <action>
         <title>changeContact.do</title>
         <class>com.itechart.contactcatalog.command.ContactChangeCommand</class>
-        <jsp>/jsp/contact.jsp</jsp>
+        <jsp>/index.jsp</jsp>
     </action>
     <action>
         <title>getContactList.do</title>

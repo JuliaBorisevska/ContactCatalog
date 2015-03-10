@@ -16,7 +16,8 @@
   <div class="content">
     <div class="content_resize">
     <p class="page-info">Список контактов</p>
-    <form action="deleteOrSendMails.do" method="post">
+<!--     <form action="deleteOrSendMails.do" method="post"> -->
+      <form  method="post">
       <div class="mainbar">
       
         <div class="article">
@@ -60,8 +61,14 @@
                 </c:forEach>
             </table>
 		</div>
-        <div class="pageart">
-          <p>Page 1 of 2 <span class="butons"><a href="#">3</a><a href="#">2</a> <a href="#" class="active">1</a></span></p>
+        <div class="pageart" style="display:none;">
+          <p>Страницы:<span class="butons">
+          <a href="#">5</a>
+          <a href="#">4</a>
+          <a href="#">3</a>
+          <a href="#">2</a>
+          <a href="#" class="active">1</a>
+          </span></p>
         </div>
       </div>
       <div class="sidebar">
@@ -73,7 +80,7 @@
             <li>
             	<input type="submit" name="delete" value="Удалить контакты" />
             </li>
-            <li><a href="jsp/search.jsp">Найти контакт</a></li>
+            <li><a href="jsp/search.jsp">Найти контакты</a></li>
             <li><input type="submit" name="send" value="Отправить Email" /></li>
           </ul>
         </div>

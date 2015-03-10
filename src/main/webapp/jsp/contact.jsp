@@ -39,7 +39,7 @@
 			
 			<c:choose>
 				<c:when test="${contact.image!=null}" >
-					<img src="${pageContext.request.contextPath}/${contact.image}" onclick="popup('popUpDivImage', 200, 400)" />
+					<img src="${pageContext.request.contextPath}/images/${contact.image}" onclick="popup('popUpDivImage', 200, 400)" />
 				</c:when>
 				<c:otherwise>
 					<img src="${pageContext.request.contextPath}/images/grey_man.png" onclick="popup('popUpDivImage', 200, 400)" />
@@ -276,7 +276,8 @@
 	<div class="clr"></div>
 	<div class="buttonsdiv" >
 			<input type="submit" name="saveContact" value="Сохранить" id="savebutton" /> 
-			<input type="submit" name="cancelContact" value="Отменить" />
+			<a href="${pageContext.request.contextPath}/index.jsp">Отменить</a>
+			<!-- <input type="submit" name="cancelContact" value="Отменить" /> -->
 	</div>
 	<br/>
 </form>
