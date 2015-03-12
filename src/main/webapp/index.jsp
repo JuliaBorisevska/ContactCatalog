@@ -9,21 +9,16 @@
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 </head>
-<body>
+<body onLoad="createPageLinks('${pageContext.request.contextPath}',${count}, ${pageNumber}); setCheckBoxes() ">
 <div class="main">
   <c:import url="jsp/header.jsp" />
   <div class="clr"></div>
   <div class="content">
     <div class="content_resize">
     <p class="page-info">Список контактов</p>
-<!--     <form action="deleteOrSendMails.do" method="post"> -->
-      <form  method="post">
       <div class="mainbar">
-      
         <div class="article">
-          
           <div class="clr"></div>
-          
           <table>
                 <tr>
                     <th>&nbsp;</th>
@@ -43,10 +38,10 @@
                 <c:forEach var="elem" items="${contacts}" varStatus="status">
                     <tr>
                             <td>
-                            	<input type="checkbox">
+                            	<input type="checkbox" id="row" name="row" value="${elem.id}">
                             </td>
                             <td>
-                            	<a href="${pageContext.request.contextPath}/editContact.do?id=${elem.id}" class="name">${elem.lastName} ${elem.firstName} ${elem.middleName}</a>
+                            	<a href="${pageContext.request.contextPath}/editContact.do?id=${elem.id}" class="name" id="name">${elem.lastName} ${elem.firstName} ${elem.middleName}</a>
                             </td>
                             <td>
                                 ${elem.birthDate} 
@@ -61,36 +56,36 @@
                 </c:forEach>
             </table>
 		</div>
-        <div class="pageart" style="display:none;">
-          <p>Страницы:<span class="butons">
-          <a href="#">5</a>
-          <a href="#">4</a>
-          <a href="#">3</a>
-          <a href="#">2</a>
-          <a href="#" class="active">1</a>
-          </span></p>
+        <div id="pageart">
+          <div id="pageLabel">Страницы: </div>
+          <div id="buttons">
+          </div>
         </div>
       </div>
       <div class="sidebar">
         <div class="gadget">
+          <form action="deleteOrSendMail.do" method="post">
+          <input type="hidden" id="checkedRows" name="checkedRows" value="${idString}">
           <ul class="sb_menu">
             <li>
             	<a href="jsp/contact.jsp">Создать контакт</a>
             </li>
             <li>
-            	<input type="submit" name="delete" value="Удалить контакты" />
+            	<input type="submit" name="delete" value="Удалить контакты" onclick="getIdString()"/>
             </li>
             <li><a href="jsp/search.jsp">Найти контакты</a></li>
-            <li><input type="submit" name="send" value="Отправить Email" /></li>
+            <li>
+            	<input type="submit" name="send" value="Отправить Email" onclick="getIdString()"/>
+            </li>
           </ul>
+          </form>
         </div>
       </div>
-      </form>
       <div class="clr"></div>
     </div>
   </div>
   <c:import url="jsp/footer.jsp" />
 </div>
-
+<script src="${pageContext.request.contextPath}/js/navigation.js"  type="text/javascript"></script>
 </body>
 </html>

@@ -7,7 +7,7 @@
 <head>
 <title>Error Page</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="css/style.css" rel="stylesheet" type="text/css" />
+<link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 <div class="main">
@@ -15,8 +15,9 @@
   <div class="clr"></div>
   <div class="content">
     <div class="content_resize">
-    <p id="page-info"><span>Ошибка</span></p>
-      Some text
+    <p class="page-info">Ошибка</p>
+      ${customerror}
+      <br/><br/><br/>
     </div>
   </div>
   <c:import url="footer.jsp" />

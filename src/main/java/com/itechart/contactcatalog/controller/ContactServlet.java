@@ -69,7 +69,7 @@ public class ContactServlet extends HttpServlet {
 		Pattern separator = Pattern.compile("/");
 		String [] parts = separator.split(request.getServletPath());
 		CommandMapper mapper = new CommandMapper();
-		ActionCommand command = mapper.defineCommand(parts[parts.length-1]);  //проверка на null 
+		ActionCommand command = mapper.defineCommand(parts[parts.length-1]);   
 		page=mapper.definePage(parts[parts.length-1]);
 		if (command!=null && page!=null ){
 			if (command.execute(request, response)){

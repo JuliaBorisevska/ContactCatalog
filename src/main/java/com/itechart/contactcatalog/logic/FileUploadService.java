@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itechart.contactcatalog.controller.ContactServlet;
-import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.exception.UploadException;
 
 public class FileUploadService {

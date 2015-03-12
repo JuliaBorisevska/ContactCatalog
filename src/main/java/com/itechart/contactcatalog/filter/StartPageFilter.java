@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.itechart.contactcatalog.command.ActionCommand;
 import com.itechart.contactcatalog.command.ContactListCommand;
+import com.itechart.contactcatalog.dao.ContactDAO;
 
 /**
  * Servlet Filter implementation class StartPageFilter
@@ -32,7 +33,9 @@ public class StartPageFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest)request;
 		HttpServletResponse resp = (HttpServletResponse)response;
-        ActionCommand command = new ContactListCommand();
+		req.getSession().setAttribute("contactListStatement", ContactDAO.getStatementForContactsList());
+		req.getSession().setAttribute("contactCountStatement", ContactDAO.getStatementForContactsCount());
+		ActionCommand command = new ContactListCommand();
         command.execute(req, resp);
         RequestDispatcher dispatcher = req.getServletContext().getRequestDispatcher("/index.jsp");
         dispatcher.forward(request, response);

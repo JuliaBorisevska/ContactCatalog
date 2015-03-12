@@ -13,7 +13,7 @@
 <body>
   <div class="header">
       <div class="logo">
-        <h1><a href="${pageContext.request.contextPath}/getContactList.do">
+        <h1><a href="${pageContext.request.contextPath}/getContactList.do?allContacts=1">
         <span>
         	Каталог
 <%--         <fmt:message key="header.label.catalog" bundle="${rb}" /> --%>

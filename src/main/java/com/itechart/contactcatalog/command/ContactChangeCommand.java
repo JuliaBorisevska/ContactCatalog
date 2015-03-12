@@ -1,7 +1,6 @@
 package com.itechart.contactcatalog.command;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -10,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalDateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -17,6 +17,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
 import com.itechart.contactcatalog.subject.Address;
@@ -32,7 +33,6 @@ public class ContactChangeCommand implements ActionCommand {
 	private static Logger logger = LoggerFactory.getLogger(ContactChangeCommand.class);
     
     private static final String TEXT_CONTACT_ID = "contactId";
-    private static final String TEXT_CONTACT_IMAGE = "image";
     private static final String TEXT_CONTACT_FIRST_NAME = "firstname";
     private static final String TEXT_CONTACT_LAST_NAME = "lastname";
     private static final String TEXT_CONTACT_MIDDLE_NAME = "middlename";
@@ -51,7 +51,6 @@ public class ContactChangeCommand implements ActionCommand {
     private static final String TEXT_CONTACT_INDEX = "index";
     private static final String TEXT_FULL_PHONE = "phone";
     private static final String TEXT_FULL_ATTACHMENT = "attachment";
-    private static final String PHOTO_FILE_INPUT = "photo";
 	
 	
 	@Override
@@ -61,31 +60,46 @@ public class ContactChangeCommand implements ActionCommand {
         		logger.debug("Start ContactChangeCommand ");
         		Pattern separator;
         		Contact contact = new Contact();
-        		contact.setId(request.getParameter(TEXT_CONTACT_ID).isEmpty()?null:Integer.valueOf(request.getParameter(TEXT_CONTACT_ID)));
-        		contact.setFirstName(request.getParameter(TEXT_CONTACT_FIRST_NAME));
-        		contact.setLastName(request.getParameter(TEXT_CONTACT_LAST_NAME));
-        		contact.setMiddleName(request.getParameter(TEXT_CONTACT_MIDDLE_NAME).isEmpty()?null:request.getParameter(TEXT_CONTACT_MIDDLE_NAME));
+        		String id = request.getParameter(TEXT_CONTACT_ID);
+        		String firstName = request.getParameter(TEXT_CONTACT_FIRST_NAME);
+        		String lastName = request.getParameter(TEXT_CONTACT_LAST_NAME);
+        		String middleName = request.getParameter(TEXT_CONTACT_MIDDLE_NAME);
+        		String birthDate = request.getParameter(TEXT_CONTACT_YEAR);
+        		String citizenship = request.getParameter(TEXT_CONTACT_CITIZENSHIP);
+        		String email = request.getParameter(TEXT_CONTACT_EMAIL);
+        		String company = request.getParameter(TEXT_CONTACT_JOB);
+        		String website = request.getParameter(TEXT_CONTACT_SITE);
+        		String country = request.getParameter(TEXT_CONTACT_COUNTRY);
+        		String town = request.getParameter(TEXT_CONTACT_TOWN);
+        		String street = request.getParameter(TEXT_CONTACT_STREET);
+        		String house = request.getParameter(TEXT_CONTACT_HOUSE);
+        		String flat =request.getParameter(TEXT_CONTACT_FLAT);
+        		String index = request.getParameter(TEXT_CONTACT_INDEX);
+        		contact.setId(StringUtils.isBlank(id)?null:Integer.valueOf(id));
+        		contact.setFirstName(firstName);
+        		contact.setLastName(lastName);
+        		contact.setMiddleName(StringUtils.isBlank(middleName)?null:middleName);
         		//String date = request.getParameter(TEXT_CONTACT_YEAR);
-        		contact.setBirthDate(LocalDate.parse(request.getParameter(TEXT_CONTACT_YEAR)));
-        		contact.setCitizenship(request.getParameter(TEXT_CONTACT_CITIZENSHIP).isEmpty()?null:request.getParameter(TEXT_CONTACT_CITIZENSHIP));
-        		contact.setEmail(request.getParameter(TEXT_CONTACT_EMAIL).isEmpty()?null:request.getParameter(TEXT_CONTACT_EMAIL));
+        		contact.setBirthDate(LocalDate.parse(birthDate));
+        		contact.setCitizenship(StringUtils.isBlank(citizenship)?null:citizenship);
+        		contact.setEmail(StringUtils.isBlank(email)?null:email);
         		Sex sex  = new Sex();
         		sex.setId(request.getParameter(TEXT_CONTACT_SEX).charAt(0));
         		MaritalStatus status = new MaritalStatus();
         		status.setId(Integer.valueOf(request.getParameter(TEXT_CONTACT_STATUS)));
         		contact.setSex(sex);
         		contact.setMaritalStatus(status);
-        		contact.setCompany(request.getParameter(TEXT_CONTACT_JOB).isEmpty()?null:request.getParameter(TEXT_CONTACT_JOB));
-        		contact.setWebsite(request.getParameter(TEXT_CONTACT_SITE).isEmpty()?null:request.getParameter(TEXT_CONTACT_SITE));
+        		contact.setCompany(StringUtils.isBlank(company)?null:company);
+        		contact.setWebsite(StringUtils.isBlank(website)?null:website);
         		Address address = new Address();
-        		address.setCountry(request.getParameter(TEXT_CONTACT_COUNTRY));
-        		address.setTown(request.getParameter(TEXT_CONTACT_TOWN));
-        		address.setStreet(request.getParameter(TEXT_CONTACT_STREET).isEmpty()?null:request.getParameter(TEXT_CONTACT_STREET));
-        		address.setHouse(request.getParameter(TEXT_CONTACT_HOUSE).isEmpty()?null:Integer.valueOf(request.getParameter(TEXT_CONTACT_HOUSE)));
-        		address.setFlat(request.getParameter(TEXT_CONTACT_FLAT).isEmpty()?null:Integer.valueOf(request.getParameter(TEXT_CONTACT_FLAT)));
-        		address.setIndexValue(request.getParameter(TEXT_CONTACT_INDEX).isEmpty()?null:Long.valueOf(request.getParameter(TEXT_CONTACT_INDEX)));
+        		address.setCountry(country);
+        		address.setTown(town);
+        		address.setStreet(StringUtils.isBlank(street)?null:street);
+        		address.setHouse(StringUtils.isBlank(house)?null:Integer.valueOf(house));
+        		address.setFlat(StringUtils.isBlank(flat)?null:Integer.valueOf(flat));
+        		address.setIndexValue(StringUtils.isBlank(index)?null:Long.valueOf(index));
         		contact.setAddress(address);
-        		String[] fullPhones = request.getParameterValues(TEXT_FULL_PHONE);  //проверка на null 
+        		String[] fullPhones = request.getParameterValues(TEXT_FULL_PHONE);
         		String[] fullAttachments = request.getParameterValues(TEXT_FULL_ATTACHMENT);
         		separator = Pattern.compile(":");
         		ArrayList<Phone> phones = new ArrayList<Phone>(); 
@@ -131,9 +145,10 @@ public class ContactChangeCommand implements ActionCommand {
         		FileUploadWrapper req = (FileUploadWrapper) request;
         		List<FileItem> items = req.getFileItems();
         		ContactService.changeContact(contact, items);
-        		
-        		ArrayList<Contact> allContacts = ContactService.receiveContacts();
-    			request.setAttribute("contacts", allContacts);
+        		request.getSession().setAttribute("contactListStatement", ContactDAO.getStatementForContactsList());
+        		request.getSession().setAttribute("contactCountStatement", ContactDAO.getStatementForContactsCount());
+        		ContactListCommand command = new ContactListCommand();
+        		command.execute(request, response);
         	}
         }
         catch (ServiceException | NumberFormatException e) {

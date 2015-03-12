@@ -40,18 +40,16 @@ function clearAttach(){
 }
 
 function convertDate(){
-	
+	var i;
 	var table=document.getElementById('attachTable');
 	var rowCount=table.rows.length;
-	for(var i=1;i<rowCount;i++){
+	for(i=1;i<rowCount;i++){
 		var row=table.rows[i];
 		var elems = document.getElementById('attachTable').rows[i].cells[1].getElementsByTagName('INPUT');
-		//alert(elems[0].value);
 		var str=elems[0].value;
 		var arr = str.split('#');
 		var dateTime = arr[2].split('-');
 		var date = new Date(dateTime[0], dateTime[1]-1, dateTime[2], dateTime[3], dateTime[4], dateTime[5]);
-		//alert(date.getTimezoneOffset()/60);
 		date.setHours(+date.getHours()-date.getTimezoneOffset()/60);
 		var now = date.getFullYear()+"-"+('0' + (date.getMonth()+1)).slice(-2)+"-"+('0' + date.getDate()).slice(-2)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 		row.cells[2].innerText = now;
@@ -72,9 +70,8 @@ function editAttach(){
 	var i;
 	if (document.getElementById('editAttach').value==0){
 		now = date.getFullYear()+"-"+('0' + (date.getMonth() + 1)).slice(-2)+"-"+('0' + date.getDate()).slice(-2)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-		alert(now);
 		utcDate = date.getUTCFullYear()+"-"+('0' + (date.getUTCMonth() + 1)).slice(-2)+"-"+('0' + date.getUTCDate()).slice(-2)+"-"+date.getUTCHours()+"-"+date.getUTCMinutes()+"-"+date.getUTCSeconds();
-		alert(tcDate);
+		alert(utcDate);
 		i =tableRows.length;
 		var row=htmlTable.insertRow(i);
 		var colCount=tableRows[0].cells.length;
@@ -115,10 +112,8 @@ function editAttach(){
 		var elems = document.getElementById('attachTable').rows[i].cells[1].getElementsByTagName('INPUT');
 		elems[0].value=id+"#"+document.getElementById('attachName').value+"#"+utcDate+"#"+contactForm.attachComment.value;
 		var aElems = document.getElementById('attachTable').rows[i].cells[1].getElementsByTagName('A');
-		//alert(aElems[0].innerText);
 		aElems[0].innerText = document.getElementById('attachName').value;
 	}
-    //tableRows[i].cells[1].innerText = "";               
     tableRows[i].cells[3].innerText = contactForm.attachComment.value;
 }
 
@@ -161,13 +156,8 @@ function editPhone() {
     var id = document.getElementById('phoneId').value;
     var x = document.createElement("INPUT");
     x.type="hidden";
-    x.name="phone";
-    //var hidText = document.createTextNode(id+":"+document.getElementById('countryCode').value+":"+document.getElementById('operatorCode').value+":"+document.getElementById('number').value+":"+type+":"+contactForm.phoneComment.value);
-    //x.appendChild(hidText);     
+    x.name="phone";    
     x.value=id+":"+document.getElementById('countryCode').value+":"+document.getElementById('operatorCode').value+":"+document.getElementById('number').value+":"+type+":"+contactForm.phoneComment.value;
-    //x.setAttribute("name", "phone");
-    //x.setAttribute("type", "hidden");
-    //x.setAttribute("value",id+":"+document.getElementById('countryCode').value+":"+document.getElementById('operatorCode').value+":"+document.getElementById('number').value+":"+type+":"+contactForm.phoneComment.value);
     tableRows[i].cells[1].appendChild(x);
     var ref = document.createElement("A");   
     ref.href = "#";
@@ -180,12 +170,6 @@ function editPhone() {
     ref.appendChild(refText);         
     tableRows[i].cells[1].appendChild(ref);
     tableRows[i].cells[3].innerText = contactForm.phoneComment.value;
-    //document.getElementById('editRow').value=0;
-    //document.getElementById('phoneId').value=0;
-	//document.getElementById('countryCode').value="";
-	//document.getElementById('operatorCode').value="";
-	//document.getElementById('number').value="";
-	//contactForm.phoneComment.value="";
 }
 
 function clearFields(){

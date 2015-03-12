@@ -1,7 +1,6 @@
 package com.itechart.contactcatalog.filter;
 
 import java.io.IOException;
-import java.util.List;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.itechart.contactcatalog.subject.Phone;
 import com.itechart.contactcatalog.wrapper.FileUploadWrapper;
 
 /**

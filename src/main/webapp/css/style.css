@@ -69,7 +69,7 @@ h1 span {
 	letter-spacing:-1px;
 }
 
-.content .mainbar {
+.mainbar {
 	margin:0;
 	padding:0;
 	float:right;
@@ -78,38 +78,50 @@ h1 span {
 	
 }
 
-.content .mainbar .article {
-	margin:0;
+.article {
+	margin:0 0 20px 0;
 	padding:10px 0 0 0;
 	color:#000000;
 }
-.content .mainbar .pageart {
+#pageart {
 	margin:0;
 	padding:10px 0 0 0;
 }
 
-.content .mainbar .pageart span.butons a {
-	margin:0 5px 0 0;
+#buttons{
 	float:right;
+	width: 80%;
+}
+
+#pageLabel{
+	float:left;
+	width: 20%;
+}
+
+
+#buttons a {
+	margin:0px 0px 5px 5px;
+	float:left;
 	color:#9a9a9a;
 	padding:1px 10px;
 	text-decoration:none;
 	border:1px solid #ebe8e8;
 	background:#fbfbfc;
 }
-.content .mainbar .pageart span.butons a:hover {
+#buttons a:hover {
 	border:1px solid #d9f0ff;
 	background:#40b5ff;
 	color:#fff;
 	text-decoration:none;
 }
-.content .mainbar .pageart span.butons a.active {
+#buttons a.active {
 	border:1px solid #ebe8e8;
 	background:#40b5ff;
 	color:#fff;
 	text-decoration:none;
+	float:left;
 }
-.content .sidebar {
+.sidebar {
 	margin: 10px 0 0 0;
 	padding:0;
 	float:left;

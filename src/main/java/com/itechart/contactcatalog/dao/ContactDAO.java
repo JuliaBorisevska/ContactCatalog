@@ -7,22 +7,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itechart.contactcatalog.exception.DAOException;
 import com.itechart.contactcatalog.subject.Address;
-import com.itechart.contactcatalog.subject.Attachment;
 import com.itechart.contactcatalog.subject.Contact;
 import com.itechart.contactcatalog.subject.MaritalStatus;
-import com.itechart.contactcatalog.subject.Phone;
 import com.itechart.contactcatalog.subject.Sex;
 
 public class ContactDAO extends AbstractDAO<Contact> {
 	private static Logger logger = LoggerFactory.getLogger(ContactDAO.class);
 	
-	private final static String SQL_SELECT_ALL_CONTACTS="SELECT id, first_name, last_name, midle_name, birth_date, company, country, town, street, house, flat FROM contact";
+	private final static String SQL_SELECT_ROWS_COUNT="SELECT COUNT(*) FROM contact";
+	private final static String SQL_SELECT_ALL_CONTACTS_LIMIT="SELECT id, first_name, last_name, midle_name, birth_date, company, country, town, street, house, flat FROM contact LIMIT ?, ?";
+	private final static String SQL_SELECT_ALL_CONTACTS="FROM contact";
 	private final static String SQL_SELECT_CONTACT_BY_ID="SELECT * FROM contact WHERE id=?";
 	private final static String SQL_SELECT_SEX_LIST="SELECT id, title FROM sex";
 	private final static String SQL_SELECT_MARITAL_STATUS_LIST="SELECT id, title FROM marital_status";
@@ -30,7 +31,10 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	private final static String SQL_CONTACT_INSERT = "INSERT INTO contact (first_name, last_name, midle_name, birth_date, sex_id, marital_status_id, citizenship, website, email, image, company, country, town, street, house, flat, index_value) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 	private final static String SQL_CONTACT_DELETE="DELETE FROM contact WHERE id=?";
 	private final static String SQL_CONTACT_UPDATE_IMAGE="UPDATE contact SET image=? WHERE id=?";
-	private final static String SQL_SELECT_ALL_CONTACTS_TEMPLATE="SELECT id, first_name, last_name, midle_name, birth_date, company, country, town, street, house, flat FROM contact WHERE (%s)";
+	private final static String SQL_SEARCH_TEMPLATE="FROM contact WHERE %s";
+	private final static String SQL_SEARCH_RESULTS="SELECT id, first_name, last_name, midle_name, birth_date, company, country, town, street, house, flat ";
+	private final static String SQL_SEARCH_COUNT="SELECT COUNT(*)";
+	private final static String SQL_LIMIT = " LIMIT ?, ?";
 	private final static String SQL_DATE = "(birth_date BETWEEN ? AND ?)";
 	private final static String SQL_AND = " AND ";
 	private final static String SQL_FIRST_NAME = "(first_name=?)";
@@ -92,52 +96,22 @@ public class ContactDAO extends AbstractDAO<Contact> {
         return contact;
     }
 	
-	public ArrayList<Contact> takeContacts() throws DAOException {
-		logger.debug("Start takeContact method");
-		ArrayList<Contact> contacts = new ArrayList<>();
-        try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_ALL_CONTACTS)) {
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Contact contact = new Contact();
-                contact.setId(rs.getInt(1));
-                contact.setFirstName(rs.getString(2));
-                contact.setLastName(rs.getString(3));
-                contact.setMiddleName(rs.getString(4));
-                contact.setBirthDate(LocalDate.fromDateFields(rs.getDate(5)));
-                contact.setCompany(rs.getString(6));
-                Address address = new Address();
-                address.setCountry(rs.getString(7));
-                address.setTown(rs.getString(8));
-                address.setStreet(rs.getString(9));
-                address.setHouse(rs.getInt(10));
-                address.setFlat(rs.getInt(11));
-                contact.setAddress(address);
-                contacts.add(contact);
-            }
-        } catch (SQLException e) {
-        	logger.error("Exception in takeContact: {} ", e);
-            throw new DAOException("Database error during contacts taking. Try to make your request later.");
-        }
-        return contacts;
-    }
-	
-	public ArrayList<Contact> findContacts(Contact contact, LocalDate more, LocalDate less) throws DAOException {
-		logger.debug("Start findContacts method");
-		ArrayList<Contact> contacts = new ArrayList<>();
+	public String getSearchStatement(Contact contact, LocalDate more, LocalDate less) throws DAOException{
+		logger.debug("Start getSearchStatement method");
 		ArrayList<String> templates = new ArrayList<>();
 		ArrayList<Object> params = new ArrayList<>();
 		String statement;
 		boolean isDate = false;
 		StringBuilder sb = new StringBuilder();
-		if (contact.getFirstName()!=null){
+		if (StringUtils.isNotBlank(contact.getFirstName())){
 			templates.add(SQL_FIRST_NAME);
 			params.add(contact.getFirstName());
 		}
-		if (contact.getLastName()!=null){
+		if (StringUtils.isNotBlank(contact.getLastName())){
 			templates.add(SQL_LAST_NAME);
 			params.add(contact.getLastName());
 		}
-		if (contact.getMiddleName()!=null){
+		if (StringUtils.isNotBlank(contact.getMiddleName())){
 			templates.add(SQL_MIDDLE_NAME);
 			params.add(contact.getMiddleName());
 		}
@@ -149,19 +123,19 @@ public class ContactDAO extends AbstractDAO<Contact> {
 			templates.add(SQL_MARITAL_STATUS_ID);
 			params.add(contact.getMaritalStatus().getId());
 		}
-		if (contact.getCitizenship()!=null){
+		if (StringUtils.isNotBlank(contact.getCitizenship())){
 			templates.add(SQL_CITIZENSHIP);
 			params.add(contact.getCitizenship());
 		}
-		if (contact.getAddress().getCountry()!=null){
+		if (StringUtils.isNotBlank(contact.getAddress().getCountry())){
 			templates.add(SQL_COUNTRY);
 			params.add(contact.getAddress().getCountry());
 		}
-		if (contact.getAddress().getTown()!=null){
+		if (StringUtils.isNotBlank(contact.getAddress().getTown())){
 			templates.add(SQL_TOWN);
 			params.add(contact.getAddress().getTown());
 		}
-		if (contact.getAddress().getStreet()!=null){
+		if (StringUtils.isNotBlank(contact.getAddress().getStreet())){
 			templates.add(SQL_STREET);
 			params.add(contact.getAddress().getStreet());
 		}
@@ -177,6 +151,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 			templates.add(SQL_INDEX);
 			params.add(contact.getAddress().getIndexValue());
 		}
+		
 		if (templates.size()!=0){
 			for (int i=0; i<templates.size()-1; i++){
 				sb.append(templates.get(i));
@@ -198,9 +173,9 @@ public class ContactDAO extends AbstractDAO<Contact> {
 		if (templates.size()==0 && !isDate){
 			statement = SQL_SELECT_ALL_CONTACTS;
 		}else{
-			statement = String.format(SQL_SELECT_ALL_CONTACTS_TEMPLATE, sb.toString());
+			statement = String.format(SQL_SEARCH_TEMPLATE, sb.toString());
 		}
-		logger.debug(statement);
+		logger.debug("Template statement for search: {}", statement);
         try(PreparedStatement ps=connection.prepareStatement(statement)) {
         	int index = 1;
         	for (Object param : params){
@@ -215,15 +190,56 @@ public class ContactDAO extends AbstractDAO<Contact> {
         		ps.setDate(index, new Date(less.toDateTimeAtStartOfDay().getMillis()));
         		logger.debug("Param: {}, {}", index, new Date(less.toDateTimeAtStartOfDay().getMillis()));
         	}
+        	logger.debug("Template statement for search with parameters: {}", StringUtils.substringAfterLast(ps.toString(), ":") );
+        	return StringUtils.substringAfterLast(ps.toString(), ":");
+        } catch (SQLException e) {
+        	logger.error("Exception in getSearchResultStatement: {} ", e);
+            throw new DAOException("Database error during getSearchResultStatement.");
+        }
+	}
+	public static String getStatementForSearchCount(String searchStatement){
+		logger.debug("Start getSearchCountStatement method");
+		StringBuilder sb = new StringBuilder();
+		sb.append(SQL_SEARCH_COUNT);
+		sb.append(searchStatement);
+		logger.debug("Statement for getting count of search results: {}", sb.toString());
+        return sb.toString(); 
+	}
+	
+	public static String getStatementForContactsCount(){
+        return SQL_SELECT_ROWS_COUNT; 
+	}
+	
+	public static String getStatementForContactsList(){
+        return SQL_SELECT_ALL_CONTACTS_LIMIT; 
+	}
+	
+	public static String getStatementForSearchResults(String searchStatement){
+		logger.debug("Start getSearchCountStatement method");
+		StringBuilder sb = new StringBuilder();
+		sb.append(SQL_SEARCH_RESULTS);
+		sb.append(searchStatement);
+		sb.append(SQL_LIMIT);
+		logger.debug("Template statement for getting search results: {}", sb.toString());
+        return sb.toString(); 
+	}
+	
+	public ArrayList<Contact> takeContacts(int positionFrom, int count, String statement) throws DAOException {
+		logger.debug("Start takeContacts method with parameters: positionFrom - {}, count - {}",positionFrom, count);
+		ArrayList<Contact> contacts = new ArrayList<>();
+        try(PreparedStatement ps=connection.prepareStatement(statement)) {
+            ps.setInt(1, positionFrom);
+            ps.setInt(2, count);
+            logger.debug("Query to db: {}", ps);
         	ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Contact c = new Contact();
-                c.setId(rs.getInt(1));
-                c.setFirstName(rs.getString(2));
-                c.setLastName(rs.getString(3));
-                c.setMiddleName(rs.getString(4));
-                c.setBirthDate(LocalDate.fromDateFields(rs.getDate(5)));
-                c.setCompany(rs.getString(6));
+                Contact contact = new Contact();
+                contact.setId(rs.getInt(1));
+                contact.setFirstName(rs.getString(2));
+                contact.setLastName(rs.getString(3));
+                contact.setMiddleName(rs.getString(4));
+                contact.setBirthDate(LocalDate.fromDateFields(rs.getDate(5)));
+                contact.setCompany(rs.getString(6));
                 Address address = new Address();
                 address.setCountry(rs.getString(7));
                 address.setTown(rs.getString(8));
@@ -231,13 +247,26 @@ public class ContactDAO extends AbstractDAO<Contact> {
                 address.setHouse(rs.getInt(10));
                 address.setFlat(rs.getInt(11));
                 contact.setAddress(address);
-                contacts.add(c);
+                contacts.add(contact);
             }
         } catch (SQLException e) {
-        	logger.error("Exception in findContacts: {} ", e);
-            throw new DAOException("Database error during findContacts.");
+        	logger.error("Exception in takeContacts: {} ", e);
+            throw new DAOException("Database error during contacts taking. Try to make your request later.");
         }
+        logger.debug("End takeContacts method");
         return contacts;
+    }
+	
+	public int takeContactsCount(String statement) throws DAOException {
+		logger.debug("Start takeContactCount method");
+        try(PreparedStatement ps=connection.prepareStatement(statement)) {
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return rs.getInt(1);
+        } catch (SQLException e) {
+        	logger.error("Exception in takeContactCount: {} ", e);
+            throw new DAOException("Database error during count of contacts taking.");
+        }
     }
 	
 	public ArrayList<Sex> takeSexList() throws DAOException {

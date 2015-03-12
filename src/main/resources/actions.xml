@@ -21,4 +21,9 @@
         <class>com.itechart.contactcatalog.command.ContactListCommand</class>
         <jsp>/index.jsp</jsp>
     </action>
+    <action>
+        <title>deleteOrSendMail.do</title>
+        <class>com.itechart.contactcatalog.command.DeleteAndMailSendingCommand</class>
+        <jsp>/index.jsp</jsp>
+    </action>
 </application>

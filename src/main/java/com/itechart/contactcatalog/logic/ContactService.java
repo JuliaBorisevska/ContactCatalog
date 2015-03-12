@@ -26,8 +26,6 @@ public class ContactService {
 
 	private static Logger logger = LoggerFactory.getLogger(ContactService.class);
 	
-	private static final String ATTACHMENT_FILE_INPUT = "attach";
-	
 	public static void changeContact(Contact contact, List<FileItem> items) throws ServiceException{
 		logger.debug("Start of changeContact");
 		Connection conn = null;
@@ -45,8 +43,6 @@ public class ContactService {
             	contactDAO.update(contact);
             	
             }
-            //ArrayList<Phone> phonesInsert = new ArrayList<>();
-            //ArrayList<Phone> phonesUpdate = new ArrayList<>();
             if (contact.getPhones().size()!=0){
             	for (Phone phone : contact.getPhones()){
             		Integer phoneTypeId = phoneDAO.takePhoneTypeId(phone.getType().getTitle());
@@ -84,7 +80,7 @@ public class ContactService {
             		if (attachment.getId()==0){
             			FileItem item = items.get(index);
             			byte[] bytes = item.get();
-                    	if (fileBytes.length!=0){
+                    	if (bytes.length!=0){
                     		int attId=attachmentDAO.create(attachment);
                     		attachment.setId(attId);
                     		logger.debug("New attachment id: {}, compare: {}", attId, attachment.getId());
@@ -130,14 +126,14 @@ public class ContactService {
 	
 	
 	
-	public static ArrayList<Contact> receiveContacts() throws ServiceException {
+	public static ArrayList<Contact> receiveContacts(int positionFrom, int count, String statement) throws ServiceException {
 		logger.debug("Start of receiveContacts");
         Connection conn = null;
         ArrayList<Contact> contacts = new ArrayList<Contact>();
         try {
             conn = ConnectionPool.getInstance().getConnection();
-            ContactDAO dao = new ContactDAO(conn);
-            contacts = dao.takeContacts();
+            ContactDAO dao = new ContactDAO(conn);            
+            contacts = dao.takeContacts(positionFrom, count, statement);
             return contacts;
         } catch (ConnectionPoolException | DAOException e) {
         	logger.error("Exception in receiveContacts: {} ", e);
@@ -151,15 +147,32 @@ public class ContactService {
         }
     }
 	
-	public static ArrayList<Contact> findContacts(Contact contact, LocalDate more, LocalDate less) throws ServiceException {
-		logger.debug("Start of findContacts");
+	public static int receiveContactsCount(String statement) throws ServiceException {
+		logger.debug("Start of receiveContactsCount");
         Connection conn = null;
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
         try {
             conn = ConnectionPool.getInstance().getConnection();
             ContactDAO dao = new ContactDAO(conn);
-            contacts = dao.findContacts(contact, more, less);
-            return contacts;
+            return dao.takeContactsCount(statement);
+        } catch (ConnectionPoolException | DAOException e) {
+        	logger.error("Exception in receiveContactsCount: {} ", e);
+			throw new ServiceException(e);
+		} finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in receiveContactsCount: {} ", e);
+			}
+        }
+    }
+
+	public static String prepareSearchStatement(Contact contact, LocalDate more, LocalDate less) throws ServiceException {
+		logger.debug("Start of prepareSearchStatement");
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection();
+            ContactDAO dao = new ContactDAO(conn);
+            return dao.getSearchStatement(contact, more, less);
         } catch (ConnectionPoolException | DAOException e) {
         	logger.error("Exception in findContacts: {} ", e);
 			throw new ServiceException(e);
@@ -195,6 +208,35 @@ public class ContactService {
 				ConnectionPool.getInstance().returnConnection(conn);
 			} catch (ConnectionPoolException e) {
 				logger.error("Exception in receiveContactById: {} ", e);
+			}
+        }
+    }
+	
+	public static void deleteContacts(List<Contact> contacts) throws ServiceException {
+        Connection conn = null;
+        try {
+            conn = ConnectionPool.getInstance().getConnection();
+            conn.setAutoCommit(false);
+            ContactDAO contactDao = new ContactDAO(conn);
+            for (Contact contact : contacts){
+            	contactDao.delete(contact);
+            }
+            conn.commit();
+        } catch (ConnectionPoolException | DAOException | SQLException e) {
+            try {
+                if(conn!=null) {
+                    conn.rollback();
+                }
+            } catch (SQLException e1) {
+                logger.error("Rollback error in deleteContacts: {}", e1);
+            }
+            logger.error("Exception in deleteContacts: {} ", e);
+        	throw new ServiceException(e);
+        } finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in deleteContacts: {} ", e);
 			}
         }
     }
