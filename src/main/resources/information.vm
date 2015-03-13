@@ -1,0 +1,32 @@
+<HTML>
+    <HEAD>
+      <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+      <LEFT>
+      <B>Добрый день, $contact.lastName $contact.firstName $contact.middleName!</B>
+      <BR/> 
+      <BR/>
+      <TABLE>
+          <TR>
+            <TD> На данный момент вы предоставили следующие контактные телефоны:</TD>
+            <TD>
+            #foreach( $phone in $contact.phones )
+            $velocityCount) $phone.countryCode $phone.operatorCode $phone.basicNumber <BR/>
+            #end
+            </TD>
+          </TR>
+          <TR>
+            <TD> На данный момент вы присоединили следующие файлы:</TD>
+            <TD>
+            #foreach( $attach in $contact.attachments )
+            $velocityCount) $attach.title $attach.uploads <BR/>
+            #end
+            </TD>
+          </TR>         
+      </TABLE>
+      <BR/>
+ 		<I><p style="color: grey">C уважением, Каталог контактов.</p></I>
+ 	</LEFT>
+    </BODY>
+  </HTML>

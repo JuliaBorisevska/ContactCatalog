@@ -1,0 +1,25 @@
+<HTML>
+    <HEAD>
+      <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+      <CENTER>
+      <h3><B><p style="color: red">C Днем рождения,<BR/>
+       $contact.lastName $contact.firstName $contact.middleName!</p></B></h1>
+      <P style="font-size:10pt; font-style:italic; color:#FF1493;">
+      	Поздравить рады с днем рожденья,<BR/>
+		Здоровья, счастья пожелать,<BR/>
+		С улыбкой, добрым настроеньем <BR/>
+		Свой путь по жизни продолжать. <BR/>
+		Пусть каждый Ваш обычный день, <BR/>
+		В прекрасный праздник превратится, <BR/>
+		И никогда печали тень <BR/>
+		В Ваших глазах не отразится! <BR/>
+      </P>
+      <BR/>
+      </CENTER>
+      <LEFT>
+ 		<I><p style="color: grey">C уважением, Каталог контактов.</p></I>
+ 	</LEFT>
+    </BODY>
+  </HTML>

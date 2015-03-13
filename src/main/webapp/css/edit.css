@@ -156,7 +156,9 @@ height: 100px;
 #matrial{
 	width: 100%;
 }
-
+#patt{
+	width: 100%;
+}
 .thefield ul{
 	list-style:none;
 	color: black;
@@ -170,10 +172,20 @@ float:right;
 } 
 
 
-/* #savebutton{
-	margin-left: 150px;
-} */
-
+a#savecan, input#savecan{
+	margin:0px 0px 5px 5px;
+	color:#9a9a9a;
+	padding:1px 10px;
+	text-decoration:none;
+	border:1px solid #ebe8e8;
+	background:#fbfbfc;
+}
+a#savecan:hover, input#savecan:hover {
+	border:1px solid #d9f0ff;
+	background:#40b5ff;
+	color:#fff;
+	text-decoration:none;
+}
 
 #blanket {
    background-color:#111;
@@ -225,3 +237,7 @@ float:right;
 	top:20px; 
 	left:20px
 }
+
+
+
+

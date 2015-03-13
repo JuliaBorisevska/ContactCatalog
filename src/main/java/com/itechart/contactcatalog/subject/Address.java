@@ -2,6 +2,8 @@ package com.itechart.contactcatalog.subject;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 public class Address implements Serializable, Cloneable{
 	private String country;
 	private String town;
@@ -68,7 +70,7 @@ public class Address implements Serializable, Cloneable{
 		sb.append(country);
 		sb.append(" ");
 		sb.append(town);
-		if (street!=null){
+		if (StringUtils.isNotEmpty(street)){
 			sb.append(" ул. ");
 			sb.append(street);
 			if (house!=0){

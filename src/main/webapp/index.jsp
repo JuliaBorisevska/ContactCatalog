@@ -64,21 +64,19 @@
       </div>
       <div class="sidebar">
         <div class="gadget">
-          <form action="deleteOrSendMail.do" method="post">
           <input type="hidden" id="checkedRows" name="checkedRows" value="${idString}">
           <ul class="sb_menu">
             <li>
             	<a href="jsp/contact.jsp">Создать контакт</a>
             </li>
             <li>
-            	<input type="submit" name="delete" value="Удалить контакты" onclick="getIdString()"/>
+            	<a href="${pageContext.request.contextPath}/deleteContacts.do?idString=" onclick="setParameter(this)">Удалить контакты</a>
             </li>
             <li><a href="jsp/search.jsp">Найти контакты</a></li>
             <li>
-            	<input type="submit" name="send" value="Отправить Email" onclick="getIdString()"/>
+            	<a href="${pageContext.request.contextPath}/getEmails.do?idString=" onclick="setParameter(this)">Отправить Email</a>
             </li>
           </ul>
-          </form>
         </div>
       </div>
       <div class="clr"></div>

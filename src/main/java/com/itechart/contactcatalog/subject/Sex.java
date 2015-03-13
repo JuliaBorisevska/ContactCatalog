@@ -25,6 +25,16 @@ public class Sex implements Serializable, Cloneable{
 	public void setTitle(String title) {
 		this.title = title;
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("id - ");
+		sb.append(id);
+		sb.append(", title - ");
+		sb.append(title);
+		return sb.toString();
+	}
 	
 	
 }

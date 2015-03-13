@@ -1,9 +1,15 @@
 package com.itechart.contactcatalog.logic;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.fileupload.FileItem;
 import org.joda.time.LocalDate;
@@ -22,9 +28,51 @@ import com.itechart.contactcatalog.subject.Attachment;
 import com.itechart.contactcatalog.subject.Contact;
 import com.itechart.contactcatalog.subject.Phone;
 
+
 public class ContactService {
 
 	private static Logger logger = LoggerFactory.getLogger(ContactService.class);
+	
+	public static void sendMessage(String topic, String text, String to) throws ServiceException{
+		try {
+			logger.debug("Start of sendMessage method");
+			String smtpHost = MailResourceManager.getProperty("mail.smtp.host");
+			int smtpPort = Integer.parseInt(MailResourceManager.getProperty("mail.smtp.port"));               
+			String username = MailResourceManager.getProperty("mail.user.name");
+			String password = MailResourceManager.getProperty("mail.user.password");
+			MailService mailService = new MailService();
+			Session session = mailService.createSession(smtpHost, smtpPort, username, password);
+			MimeMessage message;
+			message = mailService.createMimeMessage(session, topic, username, to, Message.RecipientType.TO);
+			//mailService.addText(message,"<a href='#'>HTML link</a>","utf-8","html");
+			mailService.addText(message, text,"utf-8","html");
+			mailService.sendMimeMessage(message);
+		} catch (MessagingException | IOException e) {
+			logger.error("Exception in changeContact: {} ", e);
+			throw new ServiceException(e);
+		} 
+	}
+	
+	public static List<Contact> receiveContactsWithEmail(List<Contact> contactList) throws ServiceException {
+		logger.debug("Start of receiveContactsWithEmail from contacts: {}", contactList);
+        Connection conn = null;
+        List<Contact> contacts;
+        try {
+            conn = ConnectionPool.getInstance().getConnection();
+            ContactDAO dao = new ContactDAO(conn);            
+            contacts = dao.takeContactsForSendingMails(contactList);
+            return contacts;
+        } catch (ConnectionPoolException | DAOException e) {
+        	logger.error("Exception in receiveContactsWithEmail: {} ", e);
+			throw new ServiceException(e);
+		} finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in receiveContactsWithEmail: {} ", e);
+			}
+        }
+    }
 	
 	public static void changeContact(Contact contact, List<FileItem> items) throws ServiceException{
 		logger.debug("Start of changeContact");
@@ -80,7 +128,7 @@ public class ContactService {
             		if (attachment.getId()==0){
             			FileItem item = items.get(index);
             			byte[] bytes = item.get();
-                    	if (bytes.length!=0){
+                    	if (bytes.length>0){
                     		int attId=attachmentDAO.create(attachment);
                     		attachment.setId(attId);
                     		logger.debug("New attachment id: {}, compare: {}", attId, attachment.getId());
@@ -126,10 +174,10 @@ public class ContactService {
 	
 	
 	
-	public static ArrayList<Contact> receiveContacts(int positionFrom, int count, String statement) throws ServiceException {
+	public static List<Contact> receiveContacts(int positionFrom, int count, String statement) throws ServiceException {
 		logger.debug("Start of receiveContacts");
         Connection conn = null;
-        ArrayList<Contact> contacts = new ArrayList<Contact>();
+        List<Contact> contacts;
         try {
             conn = ConnectionPool.getInstance().getConnection();
             ContactDAO dao = new ContactDAO(conn);            
@@ -240,6 +288,8 @@ public class ContactService {
 			}
         }
     }
+	
+
 	
 	
 	

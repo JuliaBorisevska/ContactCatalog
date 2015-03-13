@@ -16,6 +16,7 @@ import com.itechart.contactcatalog.command.ActionCommand;
 import com.itechart.contactcatalog.command.ContactListCommand;
 import com.itechart.contactcatalog.dao.ContactDAO;
 
+
 /**
  * Servlet Filter implementation class StartPageFilter
  */

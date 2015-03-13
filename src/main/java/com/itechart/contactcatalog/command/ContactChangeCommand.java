@@ -131,8 +131,6 @@ public class ContactChangeCommand implements ActionCommand {
         				attachment.setId(Integer.valueOf(attachParts[0]));
         				attachment.setTitle(attachParts[1]);
         				attachment.setContact(contact);
-        				//Pattern sep = Pattern.compile("-");
-        				//String[] dateParts = sep.split(attachParts[2]);
         				DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd-HH-mm-ss");
         				LocalDateTime dateTime = LocalDateTime.parse(attachParts[2], fmt);
         				attachment.setUploads(dateTime);
@@ -148,16 +146,17 @@ public class ContactChangeCommand implements ActionCommand {
         		request.getSession().setAttribute("contactListStatement", ContactDAO.getStatementForContactsList());
         		request.getSession().setAttribute("contactCountStatement", ContactDAO.getStatementForContactsCount());
         		ContactListCommand command = new ContactListCommand();
-        		command.execute(request, response);
+        		return command.execute(request, response);
+        	}else{
+        		request.setAttribute("customerror", "Что-то пошло не так...");
+                logger.error("Request doesn't have multipart content");
         	}
         }
         catch (ServiceException | NumberFormatException e) {
            request.setAttribute("customerror", e.getMessage());
            logger.error("Exception in execute: {}", e);
-           return false;
-
         }
-        return true;
+        return false; 
 	}
 
 }

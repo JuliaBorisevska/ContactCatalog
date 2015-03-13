@@ -7,7 +7,7 @@ function createPageLinks(contextPath ,count, pageNumber){
 		el.style.display = 'block';
 		for (i=1; i<=count; i++){
 			var ref = document.createElement("A");   
-		    ref.href = contextPath+"/getContactList.do?page="+i;
+		    ref.href = contextPath+"/getContactList.do?page="+i+"&"+"idString=";
 		    if (i==pageNumber){
 		    	ref.className = "active";
 		    }
@@ -56,7 +56,7 @@ function setParameter(element){
 	getIdString();
 	var hiddenInput= document.getElementById("checkedRows");
 	var link=element.href;
-	element.href=link+"&"+"idString="+hiddenInput.value;
+	element.href=link+hiddenInput.value;
 }
 
 function setCheckBoxes(){

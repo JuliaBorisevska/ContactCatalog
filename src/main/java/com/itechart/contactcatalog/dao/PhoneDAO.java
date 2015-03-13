@@ -39,7 +39,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 		}
 		sb.append(ph.get(ph.size()-1).getId());
 		String statement = String.format(SQL_SELECT_PHONE_FOR_DELETE_TEMPLATE, sb.toString());
-		logger.debug(statement);
+		logger.debug("Statement for phones deleting: ", statement);
         try(PreparedStatement ps=connection.prepareStatement(statement)) {
         	ps.setInt(1, ph.get(0).getContact().getId());
             ResultSet rs = ps.executeQuery();
@@ -50,7 +50,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
             }
         } catch (SQLException e) {
         	logger.error("Exception in takeContactPhonesForDelete: {} ", e);
-            throw new DAOException("Database error during takeContactPhonesForDelete.");
+            throw new DAOException(e);
         }
         return phones;
     }

@@ -2,6 +2,7 @@ package com.itechart.contactcatalog.subject;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.LocalDate;
 
 public class Contact extends Entity {
@@ -109,6 +110,38 @@ public class Contact extends Entity {
 
 	public void setImage(String image) {
 		this.image = image;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("id - ");
+		sb.append(this.getId());
+		sb.append(",first name - ");
+		sb.append(firstName);
+		sb.append(", lastName - ");
+		sb.append(lastName);
+		sb.append(", middleName - ");
+		sb.append(middleName);
+		sb.append(", birthDate - ");
+		sb.append(birthDate);
+		sb.append(", citizenship - ");
+		sb.append(citizenship);
+		sb.append(", website - ");
+		sb.append(website);
+		sb.append(", email - ");
+		sb.append(email);
+		sb.append(", company - ");
+		sb.append(company);
+		sb.append(", sex: ");
+		sb.append(sex);
+		sb.append(", maritalStatus: ");
+		sb.append(maritalStatus);
+		sb.append(", image: ");
+		sb.append(image);
+		sb.append(", address: ");
+		sb.append(address);
+		return sb.toString();
 	}
 	
 	

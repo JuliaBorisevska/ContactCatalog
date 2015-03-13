@@ -2,8 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<fmt:setBundle basename="pagecontent" var="rb" />
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title></title>
@@ -16,9 +15,7 @@
         <h1><a href="${pageContext.request.contextPath}/getContactList.do?allContacts=1">
         <span>
         	Каталог
-<%--         <fmt:message key="header.label.catalog" bundle="${rb}" /> --%>
         </span>контактов
-<%--         	<fmt:message key="header.label.contact" bundle="${rb}" /> --%>
         	</a></h1>
       </div>
   </div>

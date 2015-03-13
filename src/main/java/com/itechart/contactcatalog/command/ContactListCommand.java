@@ -1,6 +1,7 @@
 package com.itechart.contactcatalog.command;
 
-import java.util.ArrayList;
+
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,7 +20,7 @@ public class ContactListCommand implements ActionCommand {
 	private static final String PAGE_NUMBER = "page";
 	private static final String INPUT_CHECKED_ROWS_VALUE = "idString";
 	private static final String ALL_CONTACTS = "allContacts";
-	public static final int PAGE_CONTACTS_COUNT = 2;
+	public static final int PAGE_CONTACTS_COUNT = 5;
 	
 	@Override
 	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
@@ -34,7 +35,7 @@ public class ContactListCommand implements ActionCommand {
 			logger.debug("Checked rows: {}",request.getAttribute(INPUT_CHECKED_ROWS_VALUE));
 			String countStatement = (String) request.getSession().getAttribute("contactCountStatement");
 			String listStatement = (String) request.getSession().getAttribute("contactListStatement");
-			ArrayList<Contact> contacts;
+			List<Contact> contacts;
 			int page = request.getParameter(PAGE_NUMBER)!=null?Integer.parseInt(request.getParameter(PAGE_NUMBER)):1;
 			int count = ContactService.receiveContactsCount(countStatement);
 			int countFrom = page*PAGE_CONTACTS_COUNT-PAGE_CONTACTS_COUNT;

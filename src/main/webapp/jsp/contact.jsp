@@ -2,7 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML>
 <html>
 <head>
 <title></title>
@@ -32,8 +32,8 @@
       				<input type="file" name="photo" id="photo" accept="image/*" size="50">
       			</div>
    				<div class="buttonsdiv" >
-   					<a href="#" onclick="popup('popUpDivImage', 200, 400)">Сохранить</a>
-					<a href="#" onclick="popup('popUpDivImage', 200, 400); clearPhoto()">Отменить</a>
+   					<a href="#" id="savecan" onclick="popup('popUpDivImage', 200, 400)">Сохранить</a>
+					<a href="#" id="savecan" onclick="popup('popUpDivImage', 200, 400); clearPhoto()">Отменить</a>
 				</div>
 			</div>
 			
@@ -49,7 +49,7 @@
 		<div class="fieldwrapper">
 			<label for="firstname" class="styled">Имя:</label>
 			<div class="thefield">
-				<input type="text" id="firstname" name="firstname" value="${contact.firstName}" />
+				<input type="text" id="firstname" name="firstname" value="${contact.firstName}" required pattern="[A-ZА-Я]{1}[a-zа-я]{2,20}"/>
 			</div>
 		</div>
 		<div class="fieldwrapper">
@@ -176,8 +176,8 @@
 			</div>
 		</div>
    		<div class="buttonsdiv" >
-			<a href="#" onclick="popup('popUpDivPhone', 450, 600); editPhone()">Сохранить</a>
-			<a href="#" onclick="popup('popUpDivPhone', 450, 600)">Отменить</a>
+			<a href="#" id="savecan" onclick="popup('popUpDivPhone', 450, 600); editPhone()">Сохранить</a>
+			<a href="#" id="savecan" onclick="popup('popUpDivPhone', 450, 600)">Отменить</a>
 		</div>		
 	</div>
 	
@@ -235,8 +235,8 @@
       			<input type="file" name="attach" id="attach"  size="50">
       		</div>
    		<div class="buttonsdiv" >
-   			<a href="#" onclick="popup('popUpDivAttach', 300, 600); editAttach()">Сохранить</a>
-			<a href="#" onclick="popup('popUpDivAttach', 300, 600)">Отменить</a>
+   			<a href="#" onclick="popup('popUpDivAttach', 300, 600); editAttach()" id="savecan">Сохранить</a>
+			<a href="#" onclick="popup('popUpDivAttach', 300, 600)" id="savecan">Отменить</a>
 		</div>
 		</div>
 		
@@ -275,9 +275,8 @@
 	</div>
 	<div class="clr"></div>
 	<div class="buttonsdiv" >
-			<input type="submit" name="saveContact" value="Сохранить" id="savebutton" /> 
-			<a href="${pageContext.request.contextPath}/index.jsp">Отменить</a>
-			<!-- <input type="submit" name="cancelContact" value="Отменить" /> -->
+			<input type="submit" name="saveContact" value="Сохранить" id="savecan" /> 
+			<a href="${pageContext.request.contextPath}/index.jsp" id="savecan" >Отменить</a>
 	</div>
 	<br/>
 </form>

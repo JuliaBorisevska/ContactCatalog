@@ -1,0 +1,17 @@
+<HTML>
+    <HEAD>
+      <TITLE></TITLE>
+    </HEAD>
+    <BODY>
+      <LEFT>
+      <B>Добрый день, $contact.lastName $contact.firstName $contact.middleName!</B>
+      <BR/> 
+      <BR/>
+       <B>Спасибо, что выбрали нас.</B><BR/>
+       Вы можете в любое время изменить информацию о себе, добавить новые телефоны и присоединения.
+       <BR/><B>Приятного пользования нашим ресурсом!</B>
+      <BR/>
+ 	  <I><p style="color: grey">C уважением, Каталог контактов.</p></I>
+ 	</LEFT>
+    </BODY>
+  </HTML>

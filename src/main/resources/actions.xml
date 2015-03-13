@@ -22,8 +22,18 @@
         <jsp>/index.jsp</jsp>
     </action>
     <action>
-        <title>deleteOrSendMail.do</title>
-        <class>com.itechart.contactcatalog.command.DeleteAndMailSendingCommand</class>
+        <title>getEmails.do</title>
+        <class>com.itechart.contactcatalog.command.EmailListCommand</class>
+        <jsp>/jsp/email.jsp</jsp>
+    </action>
+    <action>
+        <title>deleteContacts.do</title>
+        <class>com.itechart.contactcatalog.command.DeletingCommand</class>
+        <jsp>/index.jsp</jsp>
+    </action>
+    <action>
+        <title>sendMail.do</title>
+        <class>com.itechart.contactcatalog.command.MailSendingCommand</class>
         <jsp>/index.jsp</jsp>
     </action>
 </application>

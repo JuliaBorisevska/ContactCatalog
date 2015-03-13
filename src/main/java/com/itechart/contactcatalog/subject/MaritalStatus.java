@@ -15,5 +15,13 @@ public class MaritalStatus extends Entity{
 		this.title = title;
 	}
 	
-	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("id - ");
+		sb.append(this.getId());
+		sb.append(", title - ");
+		sb.append(title);
+		return sb.toString();
+	}
 }

@@ -26,7 +26,7 @@ public class MailService {
 		return Session.getDefaultInstance(props, createAuthenticator(username, password));
 	}
 	
-	private Authenticator createAuthenticator(String username, String password) {
+	private Authenticator createAuthenticator(final String username, final String password) {
 		return new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
@@ -35,10 +35,10 @@ public class MailService {
 		};
 	}
 
-	public MimeMessage createMimeMessage(Session session, String subject, String from, String to, Message.RecipientType recipientType) throws MessagingException {
+	public MimeMessage createMimeMessage(Session session, String subject,String from, String to, Message.RecipientType recipientType) throws MessagingException {
 		MimeMessage msg = new MimeMessage(session);
 		msg.setFrom(new InternetAddress(from));
-		msg.setRecipients(recipientType, InternetAddress.parse(to));
+		msg.setRecipients(recipientType, InternetAddress.parse(to)); //to - comma separated address strings
 		msg.setSubject(subject);
 		msg.setContent(new MimeMultipart());
 		return msg;

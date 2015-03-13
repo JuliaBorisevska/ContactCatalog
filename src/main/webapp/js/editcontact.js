@@ -3,8 +3,6 @@ function fillPhone(obj) {
 	document.getElementById('editRow').value=index;
 	var elems = document.getElementById('phoneTable').rows[index].cells[1].getElementsByTagName('INPUT');
 	var str=elems[0].value;
-	//alert(elems.length);
-	//alert(str);
 	var arr = str.split(':');
 	document.getElementById('phoneId').value=arr[0];
 	document.getElementById('countryCode').value=arr[1];
@@ -68,14 +66,14 @@ function editAttach(){
 	var date = new Date();
     var now; 
 	var i;
+	var k;
 	if (document.getElementById('editAttach').value==0){
 		now = date.getFullYear()+"-"+('0' + (date.getMonth() + 1)).slice(-2)+"-"+('0' + date.getDate()).slice(-2)+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 		utcDate = date.getUTCFullYear()+"-"+('0' + (date.getUTCMonth() + 1)).slice(-2)+"-"+('0' + date.getUTCDate()).slice(-2)+"-"+date.getUTCHours()+"-"+date.getUTCMinutes()+"-"+date.getUTCSeconds();
-		alert(utcDate);
 		i =tableRows.length;
 		var row=htmlTable.insertRow(i);
 		var colCount=tableRows[0].cells.length;
-		for(var k=0;k<colCount;k++){
+		for(k=0;k<colCount;k++){
 			var newcell=row.insertCell(k);
 		}
 		var box = document.createElement("INPUT");
@@ -141,8 +139,6 @@ function editPhone() {
 		box.type="checkbox";
 		box.checked=false;
 		tableRows[i].cells[0].appendChild(box);
-		//tableRows[i].cells[0].innerHTML=tableRows[0].cells[0].innerHTML;
-		//tableRows[i].cells[0].childNodes[0].checked=false;
 	}else{
 		i = document.getElementById('editRow').value;
 	}
