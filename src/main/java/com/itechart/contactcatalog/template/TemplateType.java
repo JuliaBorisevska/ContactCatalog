@@ -2,7 +2,7 @@ package com.itechart.contactcatalog.template;
 
 
 
-import com.itechart.contactcatalog.logic.MailResourceManager;
+import com.itechart.contactcatalog.property.MailResourceManager;
 
 public enum TemplateType {
 	BIRTHDAY(MailResourceManager.getProperty("birthday.template"), MailResourceManager.getProperty("birthday.label")), 

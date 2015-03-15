@@ -79,7 +79,6 @@ public class ContactChangeCommand implements ActionCommand {
         		contact.setFirstName(firstName);
         		contact.setLastName(lastName);
         		contact.setMiddleName(StringUtils.isBlank(middleName)?null:middleName);
-        		//String date = request.getParameter(TEXT_CONTACT_YEAR);
         		contact.setBirthDate(LocalDate.parse(birthDate));
         		contact.setCitizenship(StringUtils.isBlank(citizenship)?null:citizenship);
         		contact.setEmail(StringUtils.isBlank(email)?null:email);
@@ -101,7 +100,7 @@ public class ContactChangeCommand implements ActionCommand {
         		contact.setAddress(address);
         		String[] fullPhones = request.getParameterValues(TEXT_FULL_PHONE);
         		String[] fullAttachments = request.getParameterValues(TEXT_FULL_ATTACHMENT);
-        		separator = Pattern.compile(":");
+        		separator = Pattern.compile("#");
         		ArrayList<Phone> phones = new ArrayList<Phone>(); 
             	if (fullPhones!=null){
         			for (String ph : fullPhones){
@@ -148,12 +147,12 @@ public class ContactChangeCommand implements ActionCommand {
         		ContactListCommand command = new ContactListCommand();
         		return command.execute(request, response);
         	}else{
-        		request.setAttribute("customerror", "Что-то пошло не так...");
+        		request.setAttribute("customerror", "message.customerror");
                 logger.error("Request doesn't have multipart content");
         	}
         }
         catch (ServiceException | NumberFormatException e) {
-           request.setAttribute("customerror", e.getMessage());
+           request.setAttribute("customerror", "message.customerror");
            logger.error("Exception in execute: {}", e);
         }
         return false; 

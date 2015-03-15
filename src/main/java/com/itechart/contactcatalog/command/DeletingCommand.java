@@ -1,7 +1,6 @@
 package com.itechart.contactcatalog.command;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -16,7 +15,6 @@ import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
 import com.itechart.contactcatalog.subject.Contact;
-import com.itechart.contactcatalog.template.TemplateType;
 
 public class DeletingCommand implements ActionCommand {
 	private static Logger logger = LoggerFactory.getLogger(DeletingCommand.class);
@@ -30,7 +28,7 @@ public class DeletingCommand implements ActionCommand {
 			logger.debug("Start deleting contacts");
 			List<Contact> contacts = takeContactListFromRequest(request);
 		if (contacts.size()==0){
-			request.setAttribute("customerror", "No contacts was checked!");
+			request.setAttribute("customerror", "message.search.unchecked");
 	        logger.debug("No contacts was checked");
 	        return false;
 		}else{
@@ -42,7 +40,7 @@ public class DeletingCommand implements ActionCommand {
 		return command.execute(request, response);
 		}
         catch (ServiceException | NumberFormatException e) {
-           request.setAttribute("customerror", e.getMessage());
+           request.setAttribute("customerror", "message.customerror");
            logger.error("Exception in execute: {}", e);
            return false;
         }

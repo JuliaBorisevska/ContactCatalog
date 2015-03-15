@@ -1,4 +1,4 @@
-package com.itechart.contactcatalog.logic;
+package com.itechart.contactcatalog.property;
 
 import java.util.ResourceBundle;
 

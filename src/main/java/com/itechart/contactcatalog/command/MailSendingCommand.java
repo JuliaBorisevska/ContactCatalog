@@ -12,9 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
+import com.itechart.contactcatalog.logic.MailSender;
 import com.itechart.contactcatalog.subject.Contact;
 import com.itechart.contactcatalog.template.TemplateCreator;
-import com.itechart.contactcatalog.template.TemplateType;
 
 public class MailSendingCommand implements ActionCommand {
 	private static Logger logger = LoggerFactory.getLogger(MailSendingCommand.class);
@@ -42,14 +42,14 @@ public class MailSendingCommand implements ActionCommand {
 					TemplateCreator creator=new TemplateCreator();
 					text = creator.formMessage(cont, template);
 				}
-				ContactService.sendMessage(topic, text, cont.getEmail());
+				MailSender.sendMessage(topic, text, cont.getEmail());
 			}
 			request.getSession().setAttribute("contactListStatement", ContactDAO.getStatementForContactsList());
     		request.getSession().setAttribute("contactCountStatement", ContactDAO.getStatementForContactsCount());
     		ContactListCommand command = new ContactListCommand();
     		return command.execute(request, response);
 		}catch(ServiceException | NumberFormatException e) {
-	           request.setAttribute("customerror", e.getMessage());
+	           request.setAttribute("customerror", "message.customerror");
 	           logger.error("Exception in execute: {}", e);
 	        }
 		

@@ -23,7 +23,7 @@ public class EmailListCommand implements ActionCommand {
 			logger.debug("Start getting emails");
 			List<Contact> contacts = DeletingCommand.takeContactListFromRequest(request);
 			if (contacts.size()==0){
-				request.setAttribute("customerror", "No contacts was checked!");
+				request.setAttribute("customerror", "message.search.unchecked");
 		        logger.debug("No contacts was checked");
 			}else{
 				List<Contact> contactsWithEmail = ContactService.receiveContactsWithEmail(contacts);

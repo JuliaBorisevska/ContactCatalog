@@ -46,7 +46,7 @@ public class ContactListCommand implements ActionCommand {
 			request.setAttribute("count", Math.ceil(pageCount));
 			request.setAttribute("pageNumber", page);
 		} catch (ServiceException | NumberFormatException e) {
-			request.setAttribute("customerror", e.getMessage());
+			request.setAttribute("customerror", "message.customerror");
 			logger.error("Exception in execute: {}", e);
 			return false;
 		}

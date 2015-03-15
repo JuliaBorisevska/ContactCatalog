@@ -63,7 +63,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 
 	@Override
 	public void setAttribute(String name, Object o) {
-		// TODO Auto-generated method stub
 		super.setAttribute(name, o);
 	}
 
@@ -97,14 +96,11 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	    String result = null;
 	    String[] values = fRegularParams.get(aName);
 	    if(values == null){
-	      //you might try the wrapper, to see if it has a value 
 	    }
 	    else if (values.length==0) {
-	      //param name known, but no values present
 	      result = "";
 	    }
 	    else {
-	      //return first value in list
 	      result = values[FIRST_VALUE];
 	    }
 	    return result;
@@ -116,12 +112,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	  */
 	  @Override 
 	  public String[] getParameterValues(String aName) {
-	   /* String[] result = null;
-	    List<String> values = fRegularParams.get(aName);
-	    if(values != null) {
-	      result = values.toArray(new String[values.size()]);
-	    }
-	    return result;*/
 		  return fRegularParams.get(aName);
 	  }
 	  

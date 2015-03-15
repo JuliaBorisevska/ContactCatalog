@@ -3,7 +3,7 @@ function fillPhone(obj) {
 	document.getElementById('editRow').value=index;
 	var elems = document.getElementById('phoneTable').rows[index].cells[1].getElementsByTagName('INPUT');
 	var str=elems[0].value;
-	var arr = str.split(':');
+	var arr = str.split('#');
 	document.getElementById('phoneId').value=arr[0];
 	document.getElementById('countryCode').value=arr[1];
 	document.getElementById('operatorCode').value=arr[2];
@@ -153,7 +153,7 @@ function editPhone() {
     var x = document.createElement("INPUT");
     x.type="hidden";
     x.name="phone";    
-    x.value=id+":"+document.getElementById('countryCode').value+":"+document.getElementById('operatorCode').value+":"+document.getElementById('number').value+":"+type+":"+contactForm.phoneComment.value;
+    x.value=id+"#"+document.getElementById('countryCode').value+"#"+document.getElementById('operatorCode').value+"#"+document.getElementById('number').value+"#"+type+"#"+contactForm.phoneComment.value;
     tableRows[i].cells[1].appendChild(x);
     var ref = document.createElement("A");   
     ref.href = "#";

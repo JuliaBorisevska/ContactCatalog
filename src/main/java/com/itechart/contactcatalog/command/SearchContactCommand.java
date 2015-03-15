@@ -1,7 +1,5 @@
 package com.itechart.contactcatalog.command;
 
-import java.util.ArrayList;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -74,7 +72,7 @@ public class SearchContactCommand implements ActionCommand {
     		command.execute(request, response);
 		}
 		catch (ServiceException | NumberFormatException e) {
-	        request.setAttribute("customerror", e.getMessage());
+	        request.setAttribute("customerror", "message.customerror");
 	        logger.error("Exception in execute: {}", e);
 	        return false;
 

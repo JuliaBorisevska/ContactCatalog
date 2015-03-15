@@ -203,6 +203,12 @@ ul.sb_menu li input:focus,ul.sb_menu li a:focus {
 }
 
 
+.invalid { background: #faa; }
+.valid { background: #afa; }
+.without {
+	background: #ffffff;
+}
+
 
 
 

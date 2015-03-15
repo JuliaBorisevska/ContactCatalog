@@ -24,7 +24,7 @@ public class ContactEditingCommand implements ActionCommand {
 			Contact contact = ContactService.receiveContactById(id);
 			request.setAttribute("contact", contact);
 		} catch (ServiceException e) {
-			request.setAttribute("customerror", e.getMessage());
+			request.setAttribute("customerror", "message.customerror");
 			logger.error("Exception in execute: {}", e);
 			return false;
 		}

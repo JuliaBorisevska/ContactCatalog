@@ -164,6 +164,23 @@ height: 100px;
 	color: black;
 }
 
+.hidden{
+	margin-left: -999em;
+  	position: absolute;
+  	
+}
+
+.classic {
+  font-family:normal 12px/1.8em Calibri, Tahoma, Geneva, sans-serif;
+  color: #f95100;
+  position: absolute;
+  margin: 0em 0em 0em 10em;
+  width: 20%;
+  background: #FFFFAA; border: 1px solid #FFAD33;
+  padding: 0.8em 1em;
+  opacity: 0.8;
+}
+
 
 .buttonsdiv{ 
 margin-top: 5px;
