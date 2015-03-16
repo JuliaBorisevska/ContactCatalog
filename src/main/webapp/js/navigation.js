@@ -60,6 +60,7 @@ function setParameter(element){
 }
 
 function setCheckBoxes(){
+	var j;
 	var hiddenInput= document.getElementById("checkedRows");
 	var str=hiddenInput.value;
 	var arr = str.split(',');

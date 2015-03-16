@@ -33,6 +33,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	private final static String SQL_CONTACT_DELETE="DELETE FROM contact WHERE id=?";
 	private final static String SQL_CONTACT_UPDATE_IMAGE="UPDATE contact SET image=? WHERE id=?";
 	private final static String SQL_SELECT_FOR_SEND_EMAILS_TEMPLATE = "SELECT * FROM contact WHERE id IN (%s) AND email IS NOT NULL";
+	private final static String SQL_SELECT_FOR_SEND_BIRTHDAY_EMAILS_TEMPLATE = "SELECT * FROM contact WHERE DAYOFYEAR(birth_date)=? AND email IS NOT NULL";
 	private final static String SQL_SEARCH_TEMPLATE="FROM contact WHERE %s";
 	private final static String SQL_SEARCH_RESULTS="SELECT id, first_name, last_name, midle_name, birth_date, company, country, town, street, house, flat ";
 	private final static String SQL_SEARCH_COUNT="SELECT COUNT(*)";
@@ -58,7 +59,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	}
 	
 	public List<Contact> takeContactsForSendingMails(List<Contact> contacts) throws DAOException {
-		logger.debug("Start takeContactsForSendingMails method with contacts: ", contacts);
+		logger.info("Start takeContactsForSendingMails method with contacts: {} ", contacts);
 		List<Contact> contactsForSending = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i< contacts.size()-1; i++){
@@ -82,8 +83,26 @@ public class ContactDAO extends AbstractDAO<Contact> {
         return contactsForSending;
     }
 	
+	public List<Contact> takeContactsForSendingBirthdayMail(int dayOfYear) throws DAOException {
+		logger.info("Start takeContactsForSendingBirthdayMail method: day of the year - {}", dayOfYear);
+		List<Contact> contactsForSending = new ArrayList<>();
+        try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_FOR_SEND_BIRTHDAY_EMAILS_TEMPLATE)) {
+            ps.setInt(1, dayOfYear);
+        	ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+            	Contact contact = new Contact();
+            	fillContact(contact, rs);
+            	contactsForSending.add(contact);
+            }
+        } catch (SQLException e) {
+        	logger.error("Exception in takeContactsForSendingBirthdayMail: {} ", e);
+            throw new DAOException(e);
+        }
+        return contactsForSending;
+    }
+	
 	public Contact takeContactById(int id) throws DAOException {
-		logger.debug("Start takeContactById method with parameter: id = {}", id);
+		logger.info("Start takeContactById method with parameter: id = {}", id);
 		Contact contact = new Contact();
 		contact.setId(id);
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_CONTACT_BY_ID)) {
@@ -103,7 +122,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
     }
 	
 	private void fillContact(Contact contact, ResultSet rs) throws DAOException{
-		logger.debug("Start takeContactById method with parameter: contact - ", contact);
+		logger.info("Start fillContact method with parameter: contact - {}", contact);
 		try {
 			contact.setId(rs.getInt(1));
 			contact.setFirstName(rs.getString(2));
@@ -138,7 +157,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	
 	
 	public String getSearchStatement(Contact contact, LocalDate more, LocalDate less) throws DAOException{
-		logger.debug("Start getSearchStatement method");
+		logger.info("Start getSearchStatement method with contact {}", contact);
 		ArrayList<String> templates = new ArrayList<>();
 		ArrayList<Object> params = new ArrayList<>();
 		String statement;
@@ -221,15 +240,12 @@ public class ContactDAO extends AbstractDAO<Contact> {
         	int index = 1;
         	for (Object param : params){
         		ps.setObject(index, param);
-        		logger.debug("Param: {}, {}", index, param);
         		index++;
         	}
         	if (isDate){
         		ps.setDate(index, new Date(more.toDateTimeAtStartOfDay().getMillis()));
-        		logger.debug("Param: {}, {}", index, new Date(more.toDateTimeAtStartOfDay().getMillis()));
         		index++;
         		ps.setDate(index, new Date(less.toDateTimeAtStartOfDay().getMillis()));
-        		logger.debug("Param: {}, {}", index, new Date(less.toDateTimeAtStartOfDay().getMillis()));
         	}
         	logger.debug("Template statement for search with parameters: {}", StringUtils.substringAfterLast(ps.toString(), ":") );
         	return StringUtils.substringAfterLast(ps.toString(), ":");
@@ -239,7 +255,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
         }
 	}
 	public static String getStatementForSearchCount(String searchStatement){
-		logger.debug("Start getSearchCountStatement method");
+		logger.info("Start getStatementForSearchCount method with statement: {}", searchStatement);
 		StringBuilder sb = new StringBuilder();
 		sb.append(SQL_SEARCH_COUNT);
 		sb.append(searchStatement);
@@ -256,17 +272,17 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	}
 	
 	public static String getStatementForSearchResults(String searchStatement){
-		logger.debug("Start getSearchCountStatement method");
+		logger.info("Start getStatementForSearchResults method with statement: {}", searchStatement);
 		StringBuilder sb = new StringBuilder();
 		sb.append(SQL_SEARCH_RESULTS);
 		sb.append(searchStatement);
 		sb.append(SQL_LIMIT);
-		logger.debug("Template statement for getting search results: {}", sb.toString());
+		logger.info("Template statement for getting search results: {}", sb.toString());
         return sb.toString(); 
 	}
 	
 	public ArrayList<Contact> takeContacts(int positionFrom, int count, String statement) throws DAOException {
-		logger.debug("Start takeContacts method with parameters: positionFrom - {}, count - {}",positionFrom, count);
+		logger.info("Start takeContacts method with parameters: positionFrom - {}, count - {}",positionFrom, count);
 		ArrayList<Contact> contacts = new ArrayList<>();
         try(PreparedStatement ps=connection.prepareStatement(statement)) {
             ps.setInt(1, positionFrom);
@@ -294,12 +310,11 @@ public class ContactDAO extends AbstractDAO<Contact> {
         	logger.error("Exception in takeContacts: {} ", e);
             throw new DAOException("Database error during contacts taking. Try to make your request later.");
         }
-        logger.debug("End takeContacts method");
         return contacts;
     }
 	
 	public int takeContactsCount(String statement) throws DAOException {
-		logger.debug("Start takeContactCount method");
+		logger.info("Start takeContactCount method with statement: {}", statement);
         try(PreparedStatement ps=connection.prepareStatement(statement)) {
             ResultSet rs = ps.executeQuery();
             rs.next();
@@ -311,7 +326,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
     }
 	
 	public ArrayList<Sex> takeSexList() throws DAOException {
-		logger.debug("Start takeSex method");
+		logger.info("Start takeSex method");
 		ArrayList<Sex> sexList = new ArrayList<>();
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_SEX_LIST)) {
             ResultSet rs = ps.executeQuery();
@@ -329,7 +344,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
     }
 	
 	public ArrayList<MaritalStatus> takeMaritalStatusList() throws DAOException {
-		logger.debug("Start takeMaritalStatusList method");
+		logger.info("Start takeMaritalStatusList method");
 		ArrayList<MaritalStatus> statusList = new ArrayList<>();
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_MARITAL_STATUS_LIST)) {
             ResultSet rs = ps.executeQuery();
@@ -349,6 +364,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
 	@Override
 	public void delete(Contact entity) throws DAOException {
+		logger.info("Start delete method with contact id: {}", entity.getId());
 		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_DELETE)) {
             ps.setInt(1, entity.getId());
             ps.executeUpdate();
@@ -361,6 +377,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
 	@Override
 	public int create(Contact entity) throws DAOException {
+		logger.info("Start create method");
 		int result = 0;
 		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
 			ps.setString(1, entity.getFirstName());
@@ -395,6 +412,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 	}
 	
 	public void updateImage(Contact entity) throws DAOException{
+		logger.info("Start updateImage method with contact: {}", entity);
 		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_UPDATE_IMAGE)) {
 			ps.setString(1, entity.getImage());
 			ps.setInt(2, entity.getId());
@@ -407,6 +425,7 @@ public class ContactDAO extends AbstractDAO<Contact> {
 
 	@Override
 	public void update(Contact entity) throws DAOException {
+		logger.info("Start update method with contact: {}", entity);
 		try(PreparedStatement ps=connection.prepareStatement(SQL_CONTACT_UPDATE)) {
 			ps.setString(1, entity.getFirstName());
 			ps.setString(2, entity.getLastName());

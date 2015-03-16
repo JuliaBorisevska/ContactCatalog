@@ -182,6 +182,17 @@ height: 100px;
 }
 
 
+.download{
+	color:#f95100;
+	background:#fff;
+	text-decoration:underline;
+	border-style:none;
+}
+.download:hover {
+	color:#febd12;
+	text-decoration:underline;
+}
+
 .buttonsdiv{ 
 margin-top: 5px;
 margin-bottom: 20px;

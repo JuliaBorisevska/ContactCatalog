@@ -1,5 +1,6 @@
 package com.itechart.contactcatalog.command;
 
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
+import com.itechart.contactcatalog.logic.DataValidator;
 import com.itechart.contactcatalog.subject.Address;
 import com.itechart.contactcatalog.subject.Attachment;
 import com.itechart.contactcatalog.subject.Contact;
@@ -57,7 +59,7 @@ public class ContactChangeCommand implements ActionCommand {
 	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
         try {
         	if (ServletFileUpload.isMultipartContent(request)) {
-        		logger.debug("Start ContactChangeCommand ");
+        		logger.info("Start ContactChangeCommand");
         		Pattern separator;
         		Contact contact = new Contact();
         		String id = request.getParameter(TEXT_CONTACT_ID);
@@ -75,6 +77,12 @@ public class ContactChangeCommand implements ActionCommand {
         		String house = request.getParameter(TEXT_CONTACT_HOUSE);
         		String flat =request.getParameter(TEXT_CONTACT_FLAT);
         		String index = request.getParameter(TEXT_CONTACT_INDEX);
+        		if (!DataValidator.validateContactData(firstName, lastName, middleName, birthDate, 
+        				citizenship, website, email, company, country, town, street, house, flat, index)){
+        			request.setAttribute("customerror", "message.data.invalid");
+                    logger.error("Input data are invalid");
+                    return false;
+        		}
         		contact.setId(StringUtils.isBlank(id)?null:Integer.valueOf(id));
         		contact.setFirstName(firstName);
         		contact.setLastName(lastName);
@@ -104,8 +112,12 @@ public class ContactChangeCommand implements ActionCommand {
         		ArrayList<Phone> phones = new ArrayList<Phone>(); 
             	if (fullPhones!=null){
         			for (String ph : fullPhones){
-        				logger.debug(ph);
         				String [] parts = separator.split(ph);
+        				if (!DataValidator.validatePhoneData(parts[1], parts[2], parts[3], parts.length==5?null:parts[5])){
+        					request.setAttribute("customerror", "message.data.invalid");
+                            logger.error("Input data are invalid");
+                            return false;
+        				}
         				Phone phone = new Phone();
         				phone.setContact(contact);
         				phone.setId(Integer.valueOf(parts[0]));
@@ -124,8 +136,12 @@ public class ContactChangeCommand implements ActionCommand {
         		ArrayList<Attachment> attachs = new ArrayList<>(); 
             	if (fullAttachments!=null){
         			for (String att : fullAttachments){
-        				logger.debug(att);
         				String [] attachParts = separator.split(att);
+        				if (!DataValidator.validateAttachmentData(attachParts[1], attachParts.length==3?null:attachParts[3])){
+        					request.setAttribute("customerror", "message.data.invalid");
+                            logger.error("Input data are invalid");
+                            return false;
+        				}
         				Attachment attachment = new Attachment();
         				attachment.setId(Integer.valueOf(attachParts[0]));
         				attachment.setTitle(attachParts[1]);
@@ -137,8 +153,7 @@ public class ContactChangeCommand implements ActionCommand {
         				attachs.add(attachment);
         			}
         		}
-        			contact.setAttachments(attachs);
-
+        		contact.setAttachments(attachs);
         		FileUploadWrapper req = (FileUploadWrapper) request;
         		List<FileItem> items = req.getFileItems();
         		ContactService.changeContact(contact, items);
@@ -151,7 +166,7 @@ public class ContactChangeCommand implements ActionCommand {
                 logger.error("Request doesn't have multipart content");
         	}
         }
-        catch (ServiceException | NumberFormatException e) {
+        catch (ServiceException | NumberFormatException | DateTimeParseException e) {
            request.setAttribute("customerror", "message.customerror");
            logger.error("Exception in execute: {}", e);
         }

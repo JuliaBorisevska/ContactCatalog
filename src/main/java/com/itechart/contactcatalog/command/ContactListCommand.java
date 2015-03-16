@@ -1,6 +1,5 @@
 package com.itechart.contactcatalog.command;
 
-
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,9 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.controller.ContactServlet;
 import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
+import com.itechart.contactcatalog.property.ConfigurationManager;
 import com.itechart.contactcatalog.subject.Contact;
 
 public class ContactListCommand implements ActionCommand {
@@ -20,11 +21,12 @@ public class ContactListCommand implements ActionCommand {
 	private static final String PAGE_NUMBER = "page";
 	private static final String INPUT_CHECKED_ROWS_VALUE = "idString";
 	private static final String ALL_CONTACTS = "allContacts";
-	public static final int PAGE_CONTACTS_COUNT = 5;
+	public static final int PAGE_CONTACTS_COUNT = Integer.parseInt(ConfigurationManager.getProperty("page.contacts.count"));
 	
 	@Override
 	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
 		try {
+			logger.info("Start ContactListCommand with request: {}", ContactServlet.takeRequestInformation(request));
 			if (StringUtils.isNotEmpty(request.getParameter(ALL_CONTACTS))){
 				request.getSession().setAttribute("contactListStatement", ContactDAO.getStatementForContactsList());
         		request.getSession().setAttribute("contactCountStatement", ContactDAO.getStatementForContactsCount());

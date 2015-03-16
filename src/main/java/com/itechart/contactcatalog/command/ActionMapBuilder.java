@@ -30,7 +30,7 @@ public class ActionMapBuilder {
 	private DocumentBuilder docBuilder;
 	
 	public ActionMapBuilder() {
-		logger.debug("Action Map Builder constructor");
+		logger.info("Action Map Builder constructor");
 		this.commandMap = new HashMap<String, ActionCommand>();
 		this.pageMap = new HashMap<String, String>();
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -52,6 +52,7 @@ public class ActionMapBuilder {
 	}
 
 	private void fillMaps(String fileName) {
+		logger.info("Start fillMaps");
 		Document doc = null;
 		try {
 			doc = docBuilder.parse(fileName);

@@ -1,5 +1,6 @@
 package com.itechart.contactcatalog.wrapper;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -29,13 +30,24 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	private static final String ENCODING = "UTF-8";  
 	private final Map<String, String[]> fRegularParams = new LinkedHashMap<>();
 	private final Map<String, FileItem> fFileParams = new LinkedHashMap<>();
-
+	private static final int MEMORY_THRESHOLD   = 1024 * 1024 * 3;  // 3MB
+    private static final int MAX_FILE_SIZE      = 1024 * 1024 * 40; // 40MB
+    private static final int MAX_REQUEST_SIZE   = 1024 * 1024 * 50; // 50MB
 	
 	
 	  /** Constructor.  */
 	  public FileUploadWrapper(HttpServletRequest aRequest) throws IOException {
 	    super(aRequest);
-	    ServletFileUpload upload = new ServletFileUpload( new DiskFileItemFactory());
+	    DiskFileItemFactory factory = new DiskFileItemFactory();
+    	factory.setSizeThreshold(MEMORY_THRESHOLD);
+    	factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
+
+    	ServletFileUpload upload = new ServletFileUpload(factory);
+
+    	upload.setFileSizeMax(MAX_FILE_SIZE);
+
+    	upload.setSizeMax(MAX_REQUEST_SIZE);
+	    //ServletFileUpload upload = new ServletFileUpload( new DiskFileItemFactory());
 	    try {
 	      List<FileItem> fileItems = upload.parseRequest(aRequest);
 	      convertToMaps(fileItems);

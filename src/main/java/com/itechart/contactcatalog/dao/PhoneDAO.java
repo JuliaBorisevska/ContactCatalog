@@ -30,7 +30,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 	}
 
 	public ArrayList<Phone> takeContactPhonesForDelete(ArrayList<Phone> ph) throws DAOException {
-		logger.debug("Start takeContactPhonesForDelete method");
+		logger.info("Start takeContactPhonesForDelete method");
 		ArrayList<Phone> phones = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i< ph.size()-1; i++){
@@ -56,7 +56,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
     }
 	
 	public ArrayList<Phone> takeContactPhones(int contactId) throws DAOException {
-		logger.debug("Start takeContactPhones method");
+		logger.info("Start takeContactPhones method");
 		ArrayList<Phone> phones = new ArrayList<>();
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_CONTACT_PHONES)) {
         	ps.setInt(1, contactId);
@@ -82,7 +82,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
     }
 	
 	public ArrayList<PhoneType> takePhoneTypes() throws DAOException {
-		logger.debug("Start takePhoneTypes method");
+		logger.info("Start takePhoneTypes method");
 		ArrayList<PhoneType> phoneTypes = new ArrayList<>();
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_PHONE_TYPES)) {
             ResultSet rs = ps.executeQuery();
@@ -100,7 +100,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
     }
 	
 	public Integer takePhoneTypeId(String title) throws DAOException {
-		logger.debug("Start takePhoneTypeId method");
+		logger.info("Start takePhoneTypeId method");
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_TYPE_ID)) {
         	ps.setString(1, title);
             ResultSet rs = ps.executeQuery();
@@ -113,6 +113,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
     }
 	
 	public void deleteByContact(int contactId) throws DAOException {
+		logger.info("Start deleteByContact method with contact id: {}", contactId);
 		try(PreparedStatement ps=connection.prepareStatement(SQL_DELETE_ALL_CONTACT_PHONES)) {
             ps.setInt(1, contactId);
             ps.executeUpdate();
@@ -125,6 +126,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 	
 	@Override
 	public void delete(Phone entity) throws DAOException {
+		logger.info("Start delete method");
 		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_DELETE)) {
             ps.setInt(1, entity.getId());
             ps.executeUpdate();
@@ -137,6 +139,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 
 	@Override
 	public int create(Phone entity) throws DAOException {
+		logger.info("Start create method");
 		int result = 0;
 		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
 			ps.setInt(1, entity.getCountryCode());
@@ -161,6 +164,7 @@ public class PhoneDAO extends AbstractDAO<Phone> {
 
 	@Override
 	public void update(Phone entity) throws DAOException {
+		logger.info("Start update method");
 		try(PreparedStatement ps=connection.prepareStatement(SQL_PHONE_UPDATE)) {
 			ps.setInt(1, entity.getCountryCode());
 			ps.setInt(2, entity.getOperatorCode());

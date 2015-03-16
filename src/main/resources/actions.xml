@@ -36,4 +36,9 @@
         <class>com.itechart.contactcatalog.command.MailSendingCommand</class>
         <jsp>/index.jsp</jsp>
     </action>
+    <action>
+        <title>downloadAttachment.do</title>
+        <class>com.itechart.contactcatalog.command.DownloadCommand</class>
+        <jsp></jsp>
+    </action>
 </application>

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.controller.ContactServlet;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
 import com.itechart.contactcatalog.subject.Contact;
@@ -20,11 +21,11 @@ public class EmailListCommand implements ActionCommand {
 	public boolean execute(HttpServletRequest request,
 			HttpServletResponse response) {
 		try {
-			logger.debug("Start getting emails");
+			logger.info("Start getting emailswith request: {}", ContactServlet.takeRequestInformation(request));
 			List<Contact> contacts = DeletingCommand.takeContactListFromRequest(request);
 			if (contacts.size()==0){
 				request.setAttribute("customerror", "message.search.unchecked");
-		        logger.debug("No contacts was checked");
+		        logger.info("No contacts was checked");
 			}else{
 				List<Contact> contactsWithEmail = ContactService.receiveContactsWithEmail(contacts);
 	            if (contactsWithEmail.size()!=0){
@@ -33,8 +34,8 @@ public class EmailListCommand implements ActionCommand {
 	            	request.setAttribute("contacts", contactsWithEmail);
 	            	return true;
 	            }else{
-	            	request.setAttribute("customerror", "Checked contacts don't have email!");
-			        logger.debug("Checked contacts don't have email");
+	            	request.setAttribute("customerror", "massage.noemail");
+			        logger.info("Checked contacts don't have email");
 	            }
 	        }
 			}

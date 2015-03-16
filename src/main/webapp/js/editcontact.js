@@ -16,6 +16,10 @@ function fillPhone(obj) {
 	}
 }
 
+function savePhoto(path){
+	document.getElementById('photoImage').src =path+"/images/foto_label.png";
+}
+
 function fillAttach(obj) {
 	var index = obj.parentNode.parentNode.rowIndex;
 	document.getElementById('editAttach').value=index;

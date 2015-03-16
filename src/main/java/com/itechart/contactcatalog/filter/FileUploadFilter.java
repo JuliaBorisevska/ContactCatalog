@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -12,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.itechart.contactcatalog.property.ConfigurationManager;
 import com.itechart.contactcatalog.wrapper.FileUploadWrapper;
 
 /**
@@ -26,8 +29,16 @@ public class FileUploadFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 	    if ( isFileUploadRequest(req) ) {
-	    	FileUploadWrapper wrapper = new FileUploadWrapper(req);
-	      chain.doFilter(wrapper, response);
+	    	FileUploadWrapper wrapper;
+			try {
+				wrapper = new FileUploadWrapper(req);
+				chain.doFilter(wrapper, response);
+			} catch (IOException e) {
+				logger.error("Exception during FileUploadWrapper construction: {}", e);
+				request.setAttribute("customerror", "message.attach.failed");
+				RequestDispatcher dispatcher = request.getServletContext().getRequestDispatcher(ConfigurationManager.getProperty("path.page.customerror"));
+				dispatcher.forward(request, response);
+			}
 	    }
 	    else {
 	      chain.doFilter(request, response);

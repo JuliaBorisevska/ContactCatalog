@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.controller.ContactServlet;
 import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
@@ -26,6 +27,7 @@ public class MailSendingCommand implements ActionCommand {
 	@Override
 	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
 		try{
+			logger.info("Start MailSendingCommand with request: {}", ContactServlet.takeRequestInformation(request));
 			String[] ids = request.getParameterValues(TEXT_CONTACT_ID);
 			List<Contact> contacts = new ArrayList<>();
 			for (String id : ids){
@@ -36,7 +38,6 @@ public class MailSendingCommand implements ActionCommand {
 			String template = request.getParameter(TEXT_TEMPLATE);
 			logger.debug("template {}", template);
 			String text = request.getParameter(TEXT_LETTER);
-			logger.debug(text);
 			for (Contact cont : contacts){
 				if (!TEXT_LETTER.equals(template)){
 					TemplateCreator creator=new TemplateCreator();

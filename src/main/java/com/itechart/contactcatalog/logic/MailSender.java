@@ -34,4 +34,5 @@ private static Logger logger = LoggerFactory.getLogger(MailSender.class);
 			throw new ServiceException(e);
 		} 
 	}
+	
 }

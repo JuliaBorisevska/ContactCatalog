@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.controller.ContactServlet;
 import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
@@ -25,11 +26,11 @@ public class DeletingCommand implements ActionCommand {
 	@Override
 	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
 		try {
-			logger.debug("Start deleting contacts");
+			logger.info("Start deleting contacts with request: {}", ContactServlet.takeRequestInformation(request));
 			List<Contact> contacts = takeContactListFromRequest(request);
 		if (contacts.size()==0){
 			request.setAttribute("customerror", "message.search.unchecked");
-	        logger.debug("No contacts was checked");
+	        logger.info("No contacts was checked");
 	        return false;
 		}else{
             ContactService.deleteContacts(contacts);

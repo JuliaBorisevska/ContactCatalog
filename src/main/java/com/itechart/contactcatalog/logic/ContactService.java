@@ -1,17 +1,12 @@
 package com.itechart.contactcatalog.logic;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.MimeMessage;
-
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +18,13 @@ import com.itechart.contactcatalog.exception.ConnectionPoolException;
 import com.itechart.contactcatalog.exception.DAOException;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.exception.UploadException;
+import com.itechart.contactcatalog.observing.BirthdayChecker;
 import com.itechart.contactcatalog.pool.ConnectionPool;
-import com.itechart.contactcatalog.property.MailResourceManager;
 import com.itechart.contactcatalog.subject.Attachment;
 import com.itechart.contactcatalog.subject.Contact;
 import com.itechart.contactcatalog.subject.Phone;
+import com.itechart.contactcatalog.template.TemplateCreator;
+import com.itechart.contactcatalog.template.TemplateType;
 
 
 public class ContactService {
@@ -56,8 +53,29 @@ public class ContactService {
         }
     }
 	
+	public static List<Contact> receiveContactsWithBirthday(int dayOfYear) throws ServiceException {
+		logger.info("Start of receiveContactsWithBirthday: day od the year - {}", dayOfYear);
+        Connection conn = null;
+        List<Contact> contacts;
+        try {
+            conn = ConnectionPool.getInstance().getConnection();
+            ContactDAO dao = new ContactDAO(conn);            
+            contacts = dao.takeContactsForSendingBirthdayMail(dayOfYear);
+            return contacts;
+        } catch (ConnectionPoolException | DAOException e) {
+        	logger.error("Exception in receiveContactsWithBirthday: {} ", e);
+			throw new ServiceException(e);
+		} finally {
+        	try {
+				ConnectionPool.getInstance().returnConnection(conn);
+			} catch (ConnectionPoolException e) {
+				logger.error("Exception in receiveContactsWithBirthday: {} ", e);
+			}
+        }
+    }
+	
 	public static void changeContact(Contact contact, List<FileItem> items) throws ServiceException{
-		logger.debug("Start of changeContact");
+		logger.info("Start of changeContact");
 		Connection conn = null;
         try {
             conn = ConnectionPool.getInstance().getConnection();
@@ -68,10 +86,18 @@ public class ContactService {
             if (contact.getId()==null){
             	int newContactId = contactDAO.create(contact);
             	contact.setId(newContactId);
-            
+            	LocalDate currentDate = new LocalDate();
+            	logger.debug("Current date: {}", currentDate);
+                int dayOfYear = currentDate.getDayOfYear();
+                int contactBirthday = contact.getBirthDate().getDayOfYear();
+                if (dayOfYear==contactBirthday && StringUtils.isNotBlank(contact.getEmail())){
+                	logger.info("Sending birthday message for contact: {}", contact);
+                	TemplateCreator creator=new TemplateCreator();
+    				String text = creator.formMessage(contact, TemplateType.BIRTHDAY.getTemplate());
+    				MailSender.sendMessage(BirthdayChecker.TOPIC, text, contact.getEmail());
+                }
             }else{
             	contactDAO.update(contact);
-            	
             }
             if (contact.getPhones().size()!=0){
             	for (Phone phone : contact.getPhones()){
@@ -83,7 +109,6 @@ public class ContactService {
             			logger.debug("New phone id: {}, compare: {}", phId, phone.getId());
             		}else{
             			phoneDAO.update(phone);
-            			//phonesUpdate.add(phone);
             		}
             	}
             	ArrayList<Phone> phonesDelete;
@@ -129,6 +154,9 @@ public class ContactService {
             	ArrayList<Attachment> attachsDelete = attachmentDAO.takeAttachmentsForDelete((ArrayList<Attachment>)contact.getAttachments());
             	for (Attachment attach : attachsDelete){
             		attachmentDAO.delete(attach);
+            		if (!FileUploadService.deleteUpload(attach.getPath())){
+            			logger.error("Can't delete file {} from disk", attach.getPath());
+            		}
             	}
             }else{
             	attachmentDAO.deleteByContact(contact.getId());

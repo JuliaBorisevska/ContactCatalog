@@ -33,8 +33,8 @@
 	}
 
 		function validateOnChange() {
-			var textfield = this; // Текстовое поле
-			var pattern = textfield.getAttribute("regex"); // Шаблон
+			var textfield = this; 
+			var pattern = textfield.getAttribute("regex");
 			var required = textfield.getAttribute("necessary") != null;
 			var re = new RegExp(pattern);
 			var value = this.value; 
@@ -46,7 +46,7 @@
 			}
 		}
 		
-		function validateOnFormSubmit(divId) {
+		function validateOnFormSubmit(divId, radioValidation) {
 			var invalid = false;
 			var radio = false;
 			var radioElem;
@@ -85,7 +85,7 @@
 				var e = elems[i]; 
 				if (e.className == "invalid") {invalid = true;}	
 			}
-			if (!radio&&radioCount>0){
+			if (radioValidation&&!radio&&radioCount>0){
 				invalid = true;
 				getHint(radioElem.parentNode.parentNode);
 			}
@@ -93,17 +93,30 @@
 		}
 		
 		function validateOnPhoneButtonClick(divId) {
-			if (validateOnFormSubmit(divId)) {
+			if (validateOnFormSubmit(divId, true)) {
 				popup(divId, 450, 600); 
 				editPhone();
 			}
 		}
 		
 		function validateOnAttachmentButtonClick(divId) {
-			if (validateOnFormSubmit(divId)) {
+			if (validateOnFormSubmit(divId, true)) {
 				popup(divId, 300, 600); 
 				editAttach();
 			}
+		}
+		
+		function validateOnSearchSubmit(divId) {
+			if (validateOnFormSubmit(divId, false)) {
+				if (document.getElementById('more').value==""&&document.getElementById('less').value==""){
+					return true;
+				}else if (document.getElementById('more').value!=""&&document.getElementById('less').value!=""){
+					return true;
+				}else{
+					getHint(document.getElementById('more').parentNode.parentNode);
+				}
+			}
+			return false;
 		}
 		
 		function getHint(obj){

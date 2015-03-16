@@ -1,5 +1,7 @@
 package com.itechart.contactcatalog.command;
 
+import java.time.format.DateTimeParseException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -8,9 +10,11 @@ import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.controller.ContactServlet;
 import com.itechart.contactcatalog.dao.ContactDAO;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
+import com.itechart.contactcatalog.logic.DataValidator;
 import com.itechart.contactcatalog.subject.Address;
 import com.itechart.contactcatalog.subject.Contact;
 import com.itechart.contactcatalog.subject.MaritalStatus;
@@ -38,13 +42,32 @@ public class SearchContactCommand implements ActionCommand {
 	public boolean execute(HttpServletRequest request,
 			HttpServletResponse response) {
 		try{
+			logger.info("Start SearchContactCommand with request: {}", ContactServlet.takeRequestInformation(request));
+			String firstName = request.getParameter(TEXT_CONTACT_FIRST_NAME);
+    		String lastName = request.getParameter(TEXT_CONTACT_LAST_NAME);
+    		String middleName = request.getParameter(TEXT_CONTACT_MIDDLE_NAME);
+    		String dateFrom = request.getParameter(TEXT_CONTACT_YEAR_MORE);
+    		String dateTo = request.getParameter(TEXT_CONTACT_YEAR_LESS);
+    		String citizenship = request.getParameter(TEXT_CONTACT_CITIZENSHIP);
+    		String country = request.getParameter(TEXT_CONTACT_COUNTRY);
+    		String town = request.getParameter(TEXT_CONTACT_TOWN);
+    		String street = request.getParameter(TEXT_CONTACT_STREET);
+    		String house = request.getParameter(TEXT_CONTACT_HOUSE);
+    		String flat =request.getParameter(TEXT_CONTACT_FLAT);
+    		String index = request.getParameter(TEXT_CONTACT_INDEX);
+			if (!DataValidator.validateSearchDate(firstName, lastName, middleName, dateFrom, dateTo,
+					citizenship, country, town, street, house, flat, index)){
+    			request.setAttribute("customerror", "message.data.invalid");
+                logger.error("Input data are invalid");
+                return false;
+    		}
 			Contact contact = new Contact();
-			contact.setFirstName(request.getParameter(TEXT_CONTACT_FIRST_NAME));
-    		contact.setLastName(request.getParameter(TEXT_CONTACT_LAST_NAME));
-    		contact.setMiddleName(request.getParameter(TEXT_CONTACT_MIDDLE_NAME));
-    		LocalDate less = StringUtils.isBlank(request.getParameter(TEXT_CONTACT_YEAR_LESS))?null:LocalDate.parse(request.getParameter(TEXT_CONTACT_YEAR_LESS));
-    		LocalDate more = StringUtils.isBlank(request.getParameter(TEXT_CONTACT_YEAR_MORE))?null:LocalDate.parse(request.getParameter(TEXT_CONTACT_YEAR_MORE));
-    		contact.setCitizenship(request.getParameter(TEXT_CONTACT_CITIZENSHIP));
+			contact.setFirstName(firstName);
+    		contact.setLastName(lastName);
+    		contact.setMiddleName(middleName);
+    		LocalDate less = StringUtils.isBlank(dateTo)?null:LocalDate.parse(dateTo);
+    		LocalDate more = StringUtils.isBlank(dateFrom)?null:LocalDate.parse(dateFrom);
+    		contact.setCitizenship(citizenship);
     		if (request.getParameter(TEXT_CONTACT_SEX)!=null){
     			Sex sex  = new Sex();
     			sex.setId(request.getParameter(TEXT_CONTACT_SEX).charAt(0));
@@ -56,12 +79,12 @@ public class SearchContactCommand implements ActionCommand {
     			contact.setMaritalStatus(status);
     		}
     		Address address = new Address();
-    		address.setCountry(request.getParameter(TEXT_CONTACT_COUNTRY));
-    		address.setTown(request.getParameter(TEXT_CONTACT_TOWN));
-    		address.setStreet(request.getParameter(TEXT_CONTACT_STREET));
-    		address.setHouse(request.getParameter(TEXT_CONTACT_HOUSE).isEmpty()?null:Integer.valueOf(request.getParameter(TEXT_CONTACT_HOUSE)));
-    		address.setFlat(request.getParameter(TEXT_CONTACT_FLAT).isEmpty()?null:Integer.valueOf(request.getParameter(TEXT_CONTACT_FLAT)));
-    		address.setIndexValue(request.getParameter(TEXT_CONTACT_INDEX).isEmpty()?null:Long.valueOf(request.getParameter(TEXT_CONTACT_INDEX)));
+    		address.setCountry(country);
+    		address.setTown(town);
+    		address.setStreet(street);
+    		address.setHouse(StringUtils.isBlank(house)?null:Integer.valueOf(house));
+    		address.setFlat(StringUtils.isBlank(flat)?null:Integer.valueOf(flat));
+    		address.setIndexValue(StringUtils.isBlank(index)?null:Long.valueOf(index));
     		contact.setAddress(address);
     		String templateStatement = ContactService.prepareSearchStatement(contact, more, less);
     		String countStatement = ContactDAO.getStatementForSearchCount(templateStatement);
@@ -71,13 +94,12 @@ public class SearchContactCommand implements ActionCommand {
     		ContactListCommand command = new ContactListCommand();
     		command.execute(request, response);
 		}
-		catch (ServiceException | NumberFormatException e) {
+		catch (ServiceException | NumberFormatException | DateTimeParseException e) {
 	        request.setAttribute("customerror", "message.customerror");
 	        logger.error("Exception in execute: {}", e);
 	        return false;
-
-	        }
-	        return true;
+	    }
+	    return true;
 	}
 
 }

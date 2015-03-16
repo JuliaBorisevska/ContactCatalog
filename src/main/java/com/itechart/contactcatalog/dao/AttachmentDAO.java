@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 
+import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 	private final static String SQL_ATTACHMENT_UPDATE_PATH="UPDATE attachment SET path=? WHERE id=?"; 
 	private final static String SQL_ATTACHMENT_DELETE="DELETE FROM attachment WHERE id=?";
 	private final static String SQL_ATTACHMENT_INSERT = "INSERT INTO attachment (title, path, upload_date, user_comment, contact_id) VALUES (?, ?, ?, ?, ?)";
-	private final static String SQL_SELECT_ATTACHMENT_FOR_DELETE_TEMPLATE = "SELECT id FROM attachment WHERE id NOT IN (%s) AND contact_id=?";
+	private final static String SQL_SELECT_ATTACHMENT_FOR_DELETE_TEMPLATE = "SELECT id, path FROM attachment WHERE id NOT IN (%s) AND contact_id=?";
 	private final static String SQL_DELETE_ALL_CONTACT_ATTACHMENTS = "DELETE FROM attachment WHERE contact_id=?";
 	
 	public AttachmentDAO(Connection connection) {
@@ -32,7 +33,7 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 	}
 
 	public ArrayList<Attachment> takeAttachmentsForDelete(ArrayList<Attachment> attachs) throws DAOException {
-		logger.debug("Start takeContactPhonesForDelete method");
+		logger.info("Start takeContactPhonesForDelete method");
 		ArrayList<Attachment> attachments = new ArrayList<>();
 		StringBuilder sb = new StringBuilder();
 		for (int i=0; i< attachs.size()-1; i++){
@@ -48,6 +49,7 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
             while (rs.next()) {
             	Attachment attachment = new Attachment();
             	attachment.setId(rs.getInt(1));
+            	attachment.setPath(rs.getString(2));
             	attachments.add(attachment);
             }
         } catch (SQLException e) {
@@ -58,7 +60,7 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
     }
 	
 	public ArrayList<Attachment> takeContactAttachments(int contactId) throws DAOException {
-		logger.debug("Start takeContactAttachments method");
+		logger.info("Start takeContactAttachments method with id of the contact: {}", contactId);
 		ArrayList<Attachment> attachments = new ArrayList<>();
         try(PreparedStatement ps=connection.prepareStatement(SQL_SELECT_CONTACT_ATTACHMENTS)) {
         	ps.setInt(1, contactId);
@@ -76,12 +78,13 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
             }
         } catch (SQLException e) {
         	logger.error("Exception in takeContactAttachments: {} ", e);
-            throw new DAOException("Database error during takeContactAttachments. Try to make your request later.");
+            throw new DAOException("Database error during takeContactAttachments.");
         }
         return attachments;
     }
 	
 	public void deleteByContact(int contactId) throws DAOException {
+		logger.info("Start deleteByContact method with id of the contact: {}", contactId);
 		try(PreparedStatement ps=connection.prepareStatement(SQL_DELETE_ALL_CONTACT_ATTACHMENTS)) {
             ps.setInt(1, contactId);
             ps.executeUpdate();
@@ -94,7 +97,7 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 	
 	@Override
 	public void delete(Attachment entity) throws DAOException {
-		logger.debug("Start delete method");
+		logger.info("Start delete method, attachment id: {}", entity.getId());
 		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_DELETE)) {
             ps.setInt(1, entity.getId());
             ps.executeUpdate();
@@ -107,12 +110,12 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 
 	@Override
 	public int create(Attachment entity) throws DAOException {
-		logger.debug("Start create method");
+		logger.info("Start create method");
 		int result = 0;
 		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_INSERT, PreparedStatement.RETURN_GENERATED_KEYS)) {
 			ps.setString(1, entity.getTitle());
 			ps.setString(2, entity.getPath());
-			ps.setTimestamp(3,new Timestamp(entity.getUploads().toDateTime().getMillis()));
+			ps.setTimestamp(3,new Timestamp(entity.getUploads().toDateTime(DateTimeZone.getDefault()).getMillis()));
 			ps.setString(4, entity.getUserComment());
 			ps.setInt(5, entity.getContact().getId());
 			ps.executeUpdate();
@@ -131,7 +134,7 @@ public class AttachmentDAO extends AbstractDAO<Attachment> {
 	
 	
 	public void updatePath(Attachment entity) throws DAOException{
-		logger.debug("Start updatePath method");
+		logger.info("Start updatePath method");
 		try(PreparedStatement ps=connection.prepareStatement(SQL_ATTACHMENT_UPDATE_PATH)) {
 			ps.setString(1,entity.getPath());
 			ps.setInt(2, entity.getId());

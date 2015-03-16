@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.itechart.contactcatalog.controller.ContactServlet;
 import com.itechart.contactcatalog.exception.ServiceException;
 import com.itechart.contactcatalog.logic.ContactService;
 import com.itechart.contactcatalog.subject.Contact;
@@ -18,8 +19,8 @@ public class ContactEditingCommand implements ActionCommand {
 	
 	@Override
 	public boolean execute(HttpServletRequest request, HttpServletResponse response) {
-		
         try {
+        	logger.info("Start ContactEditingCommand with request: {}", ContactServlet.takeRequestInformation(request));
         	int id = Integer.parseInt(request.getParameter(CONTACT_ID_PARAMETER));
 			Contact contact = ContactService.receiveContactById(id);
 			request.setAttribute("contact", contact);

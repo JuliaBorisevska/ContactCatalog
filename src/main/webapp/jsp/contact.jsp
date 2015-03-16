@@ -19,7 +19,7 @@
   <div class="content">
     <div class="content_resize">
     <p class="page-info">Создание/редактирование контакта</p>
-      <form class="contactform"  name="contactForm" action="${pageContext.request.contextPath}/changeContact.do" enctype="multipart/form-data" method="post" onsubmit="return validateOnFormSubmit('left')">
+      <form class="contactform"  name="contactForm" action="${pageContext.request.contextPath}/changeContact.do" enctype="multipart/form-data" method="post" onsubmit="return validateOnFormSubmit('left', true)">
       <input type="hidden" name="contactId" value="${contact.id}" />
       <input type="hidden" name="image" value="${contact.image}" />
       <div id="blanket" style="display:none;"></div>
@@ -29,7 +29,7 @@
       			<input type="file" name="photo" id="photo" accept="image/*" size="50">
       		</div>
    			<div class="buttonsdiv" >
-   				<a href="#" id="savecan" onclick="popup('popUpDivImage', 200, 400)">Сохранить</a>
+   				<a href="#" id="savecan" onclick="popup('popUpDivImage', 200, 400); savePhoto('${pageContext.request.contextPath}')">Сохранить</a>
 				<a href="#" id="savecan" onclick="popup('popUpDivImage', 200, 400); clearPhoto()">Отменить</a>
 			</div>
 	  </div>
@@ -37,10 +37,10 @@
       	<div class="fieldwrapper">
 			<c:choose>
 				<c:when test="${contact.image!=null}" >
-					<img src="${pageContext.request.contextPath}/images/${contact.image}" onclick="popup('popUpDivImage', 200, 400)" />
+					<img id="photoImage" src="${pageContext.request.contextPath}/images/${contact.image}" onclick="popup('popUpDivImage', 200, 400)" />
 				</c:when>
 				<c:otherwise>
-					<img src="${pageContext.request.contextPath}/images/grey_man.png" onclick="popup('popUpDivImage', 200, 400)" />
+					<img id="photoImage" src="${pageContext.request.contextPath}/images/grey_man.png" onclick="popup('popUpDivImage', 200, 400)" />
 				</c:otherwise>
 			</c:choose>
       	</div>
@@ -86,7 +86,7 @@
 		<div class="fieldwrapper">
 			<label for="citizenship" class="styled">Гражданство:</label>
 			<div class="thefield">
-				<input type="text" id="citizenship" name="citizenship" value="${contact.citizenship}" regex="^[A-ZА-Я]{1}[a-zа-я]{2,20}$" onfocus="getHint(this)" onblur="hideHint(this)"/><br />
+				<input type="text" id="citizenship" name="citizenship" value="${contact.citizenship}" regex="^[A-ZА-Яa-zа-я]{2,20}$" onfocus="getHint(this)" onblur="hideHint(this)"/><br />
 				<span class="hidden">Данное поле может содержать только буквы и пробелы (до 20 символов)</span>
 			</div>
 		</div>
@@ -264,7 +264,7 @@
 			</div>
 			</div>
 			<div id="attachFileDiv">
-      			<input type="file" name="attach" id="attach"  size="50" onclick="higeHint(this)">
+      			<input type="file" name="attach" id="attach"  size="50" onclick="hideHint(this)">
       			<span class="hidden">Файл обязательно должен быть выбран</span>
       		</div>
    		<div class="buttonsdiv" >
@@ -302,6 +302,7 @@
                             </td>
                             <td>${elem.uploads.toString("yyyy-MM-dd-HH-mm-ss")}</td>
                             <td>${elem.userComment}</td>
+                            <td><a href="${pageContext.request.contextPath}/downloadAttachment.do?file=${elem.path}" class="download">Скачать</a></td>
                     </tr>
                 </c:forEach>
             </table>

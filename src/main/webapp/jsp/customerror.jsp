@@ -2,6 +2,7 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<fmt:setBundle basename="pagecontent" var="rb" />
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -16,7 +17,7 @@
   <div class="content">
     <div class="content_resize">
     <p class="page-info">Ошибка</p>
-      ${customerror}
+      <fmt:message key="${customerror}" bundle="${ rb }" />
       <br/><br/><br/>
     </div>
   </div>
