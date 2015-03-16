@@ -50,9 +50,9 @@ public class MailService {
 			MimeMultipart multipart = (MimeMultipart) message.getContent();
 			multipart.addBodyPart(textPart);
 			return message;
-			}
+	}
 	
 	public void sendMimeMessage(MimeMessage message) throws MessagingException {
 		Transport.send(message);
-		}
+	}
 }

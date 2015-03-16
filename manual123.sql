@@ -43,7 +43,7 @@ INSERT INTO `attachment` (`id`, `title`, `path`, `upload_date`, `user_comment`, 
 CREATE TABLE IF NOT EXISTS `contact` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `first_name` varchar(20) NOT NULL,
-  `last_name` varchar(30) NOT NULL,
+  `last_name` varchar(40) NOT NULL,
   `midle_name` varchar(20) DEFAULT NULL,
   `birth_date` date NOT NULL,
   `sex_id` varchar(1) NOT NULL,

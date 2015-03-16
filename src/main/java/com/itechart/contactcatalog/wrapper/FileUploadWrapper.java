@@ -22,9 +22,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.itechart.contactcatalog.command.ContactChangeCommand;
 
-public class FileUploadWrapper extends HttpServletRequestWrapper {  //изменить exception + лог
+public class FileUploadWrapper extends HttpServletRequestWrapper {  
 	private static Logger logger = LoggerFactory.getLogger(FileUploadWrapper.class); 
 	private static final int FIRST_VALUE = 0;  
 	private static final String ENCODING = "UTF-8";  
@@ -35,25 +34,21 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
     private static final int MAX_REQUEST_SIZE   = 1024 * 1024 * 50; // 50MB
 	
 	
-	  /** Constructor.  */
 	  public FileUploadWrapper(HttpServletRequest aRequest) throws IOException {
 	    super(aRequest);
 	    DiskFileItemFactory factory = new DiskFileItemFactory();
     	factory.setSizeThreshold(MEMORY_THRESHOLD);
     	factory.setRepository(new File(System.getProperty("java.io.tmpdir")));
-
     	ServletFileUpload upload = new ServletFileUpload(factory);
-
     	upload.setFileSizeMax(MAX_FILE_SIZE);
-
     	upload.setSizeMax(MAX_REQUEST_SIZE);
-	    //ServletFileUpload upload = new ServletFileUpload( new DiskFileItemFactory());
 	    try {
 	      List<FileItem> fileItems = upload.parseRequest(aRequest);
 	      convertToMaps(fileItems);
 	    }
 	    catch(FileUploadException ex){
-	      throw new IOException("Cannot parse underlying request: " + ex.toString());
+	    	logger.error("Exception in FileUploadWrapper constructor: {}", ex);
+	    	throw new IOException("Cannot parse underlying request: " + ex.toString());
 	    }
 	  }
 	  
@@ -79,11 +74,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	}
 
 
-
-	/**
-	  * Return all request parameter names, for both regular controls and file upload 
-	  * controls.
-	  */
 	  @Override 
 	  public Enumeration<String> getParameterNames() {
 	    Set<String> allNames = new LinkedHashSet<>();
@@ -92,17 +82,6 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	    return Collections.enumeration(allNames);
 	  }
 	  
-	  /**
-	  * Return the parameter value. Applies only to regular parameters, not to 
-	  * file upload parameters. 
-	  * 
-	  * <P>If the parameter is not present in the underlying request, 
-	  * then <tt>null</tt> is returned.
-	  * <P>If the parameter is present, but has no  associated value, 
-	  * then an empty string is returned.
-	  * <P>If the parameter is multivalued, return the first value that 
-	  * appears in the request.  
-	  */
 	  @Override 
 	  public String getParameter(String aName) {
 	    String result = null;
@@ -118,36 +97,20 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	    return result;
 	  }
 	  
-	  /**
-	  * Return the parameter values. Applies only to regular parameters, 
-	  * not to file upload parameters.
-	  */
 	  @Override 
 	  public String[] getParameterValues(String aName) {
 		  return fRegularParams.get(aName);
 	  }
 	  
-	  /**
-	  * Return a {@code Map<String, String[]} for all regular parameters.
-	  * Does not return any file upload parameters at all. 
-	  */
 	  @Override 
 	  public Map<String, String[]> getParameterMap() {
 	    return Collections.unmodifiableMap(fRegularParams);
 	  }
 	  
-	  /**
-	  * Return a {@code List<FileItem>}, in the same order as they appear
-	  *  in the underlying request.
-	  */
 	  public List<FileItem> getFileItems(){
 	    return new ArrayList<FileItem>(fFileParams.values());
 	  }
 	  
-	  /**
-	  * Return the {@link FileItem} of the given name.
-	  * <P>If the name is unknown, then return <tt>null</tt>.
-	  */
 	  public FileItem getFileItem(String aFieldName){
 	    return fFileParams.get(aFieldName);
 	  }
@@ -176,13 +139,12 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 	    return fRegularParams.get(aItem.getFieldName()) != null;
 	  }
 	  
-	  private void addSingleValueItem(FileItem aItem){              ///exception + log
+	  private void addSingleValueItem(FileItem aItem){              
 		  String[] strarr = new String[1];
 		try {
 			strarr[0]=aItem.getString(ENCODING);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in addSingleValueItem: {}", e);
 		}
 		fRegularParams.put(aItem.getFieldName(), strarr);
 	  }
@@ -195,8 +157,7 @@ public class FileUploadWrapper extends HttpServletRequestWrapper {  //измен
 			strings2[strings.length] = aItem.getString(ENCODING);
 			fRegularParams.put(aItem.getFieldName(), strings2);
 		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("Exception in addSingleValueItem: {}", e);
 		}
 	  }
 	} 

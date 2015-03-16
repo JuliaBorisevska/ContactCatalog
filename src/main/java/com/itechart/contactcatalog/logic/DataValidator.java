@@ -10,17 +10,17 @@ public class DataValidator {
     public final static String REGEX_CITIZENSHIP="^[A-ZА-Яa-zа-я]{2,20}$";
     public final static String REGEX_LAST_NAME="^[A-ZА-Я]{1}[a-zёа-я]{2,19}-?([A-ZА-Я]{1}[a-zёа-я]{2,18})?$";
     public final static String REGEX_EMAIL="^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$";
-    public final static String REGEX_COUNTRY="^[A-ZА-ЯЁa-zёа-я\\s-]{2,20}$";  //town
+    public final static String REGEX_COUNTRY="^[A-ZА-ЯЁa-zёа-я\\s-]{2,20}$";
     public final static String REGEX_COMPANY="^[\\dA-ZА-ЯЁa-zёа-я\\s-]{2,20}$";
     public final static String REGEX_SITE="^((https?|ftp)\\:\\/\\/)?([a-z0-9]{1})((\\.[a-z0-9-])|([a-z0-9-]))*\\.([a-z]{2,6})(\\/?)$";
     public final static String REGEX_STREET="^[A-ZА-ЯЁa-zёа-я\\s-\\d\\.]{2,20}$";
     public final static String REGEX_INDEX="^\\d{6}$";
-    public final static String REGEX_DIGIT="^\\d+$"; //house flat
+    public final static String REGEX_DIGIT="^\\d+$";
     public final static String REGEX_DATE="^[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])$";
     public final static String REGEX_COUNTRY_CODE="^\\d{3}$";
     public final static String REGEX_OPERATOR_CODE="^\\d{2,3}$";
     public final static String REGEX_NUMBER="^\\d{5,7}$";
-    public final static String REGEX_COMMENT="^[A-ZЁА-Яa-zёа-я\\s_,;:!?()\\d]{1,100}$"; //title
+    public final static String REGEX_COMMENT="^[A-ZЁА-Яa-zёа-я\\s_,;:!?()\\d]{1,100}$"; 
 
 
     public static boolean validateContactData(String firstName, String lastName, String middleName, 

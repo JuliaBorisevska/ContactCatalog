@@ -166,7 +166,7 @@ public class ContactChangeCommand implements ActionCommand {
                 logger.error("Request doesn't have multipart content");
         	}
         }
-        catch (ServiceException | NumberFormatException | DateTimeParseException e) {
+        catch (Exception e) {
            request.setAttribute("customerror", "message.customerror");
            logger.error("Exception in execute: {}", e);
         }

@@ -101,11 +101,11 @@ public class ContactServlet extends HttpServlet {
 		Enumeration<String> params=request.getParameterNames();
         while (params.hasMoreElements()){
             String paramName=params.nextElement();
-            String values[]=request.getParameterValues(paramName);
+            String value=request.getParameter(paramName);
             sb.append("Parameter: ");
             sb.append(paramName);
             sb.append(" - ");
-            sb.append(values[0]);
+            sb.append(value);
             sb.append("\n");
         }
         Enumeration<String> attrs=request.getAttributeNames();
@@ -116,7 +116,7 @@ public class ContactServlet extends HttpServlet {
             sb.append(attrName);
             sb.append(" - ");
             sb.append(attrValue);
-            sb.append("\n");
+            sb.append(" ");
         }
         Enumeration<String> sessionAttrs=request.getSession().getAttributeNames();
         while (sessionAttrs.hasMoreElements()){
@@ -126,7 +126,7 @@ public class ContactServlet extends HttpServlet {
             sb.append(sessionName);
             sb.append(" - ");
             sb.append(sessionValue);
-            sb.append("\n");
+            sb.append(" ");
         }
         return sb.toString();
         

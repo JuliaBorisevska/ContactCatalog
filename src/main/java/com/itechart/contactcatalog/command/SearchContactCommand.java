@@ -94,7 +94,7 @@ public class SearchContactCommand implements ActionCommand {
     		ContactListCommand command = new ContactListCommand();
     		command.execute(request, response);
 		}
-		catch (ServiceException | NumberFormatException | DateTimeParseException e) {
+		catch (Exception e) {
 	        request.setAttribute("customerror", "message.customerror");
 	        logger.error("Exception in execute: {}", e);
 	        return false;

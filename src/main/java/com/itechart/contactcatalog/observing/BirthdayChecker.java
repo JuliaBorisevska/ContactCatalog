@@ -1,6 +1,5 @@
 package com.itechart.contactcatalog.observing;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +26,6 @@ public class BirthdayChecker extends Thread{
         logger.info("BirthdayChecker have started working.");
         while (check) {
         	LocalDate currentDate = new LocalDate();
-        	logger.debug("Current date: {}", currentDate);
             int dayOfYear = currentDate.getDayOfYear();
             String text;
         	logger.info("Start sending emails for contacts who was born in day of the year: {}", dayOfYear);

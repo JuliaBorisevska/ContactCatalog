@@ -3,8 +3,6 @@ package com.itechart.contactcatalog.logic;
 import java.io.File;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +24,7 @@ public class FileUploadService {
     	}else{
     		uploadPath = ATTACHMENT_UPLOAD_DIRECTORY;
     	}
-    	logger.debug("uploadPath: {}", uploadPath);
+    	logger.info("Start of uploadFile, uploadPath: {}", uploadPath);
 
     	File uploadDir = new File(uploadPath);
     	if (!uploadDir.exists()) {
@@ -51,11 +49,14 @@ public class FileUploadService {
     }
     
     public static boolean deleteUpload(String fileName){
+    	logger.info("Start of deleteUpload with fileName - {}", fileName);
     	boolean result = false;
     	String filePath = ATTACHMENT_UPLOAD_DIRECTORY + File.separator + fileName;
     	File file = new File(filePath);
         if (file.exists()){
             result = file.delete();
+        }else{
+        	logger.warn("File {} doesn't exist", filePath);
         }
         return result;
     }

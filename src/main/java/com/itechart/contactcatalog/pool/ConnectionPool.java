@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.itechart.contactcatalog.exception.ConnectionPoolException;
+import com.itechart.contactcatalog.property.ConfigurationManager;
 
 public class ConnectionPool {
 	private static final String DATASOURCE_NAME = "jdbc/manual";

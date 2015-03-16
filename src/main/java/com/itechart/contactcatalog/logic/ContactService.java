@@ -33,7 +33,7 @@ public class ContactService {
 	
 	
 	public static List<Contact> receiveContactsWithEmail(List<Contact> contactList) throws ServiceException {
-		logger.debug("Start of receiveContactsWithEmail from contacts: {}", contactList);
+		logger.debug("Start of receiveContactsWithEmail from contacts: [{}]", contactList);
         Connection conn = null;
         List<Contact> contacts;
         try {
@@ -54,7 +54,7 @@ public class ContactService {
     }
 	
 	public static List<Contact> receiveContactsWithBirthday(int dayOfYear) throws ServiceException {
-		logger.info("Start of receiveContactsWithBirthday: day od the year - {}", dayOfYear);
+		logger.info("Start of receiveContactsWithBirthday: day of the year - {}", dayOfYear);
         Connection conn = null;
         List<Contact> contacts;
         try {
@@ -75,7 +75,7 @@ public class ContactService {
     }
 	
 	public static void changeContact(Contact contact, List<FileItem> items) throws ServiceException{
-		logger.info("Start of changeContact");
+		logger.info("Start of changeContact for contact: [{}]", contact);
 		Connection conn = null;
         try {
             conn = ConnectionPool.getInstance().getConnection();
@@ -106,7 +106,6 @@ public class ContactService {
             		if (phone.getId()==0){
             			int phId=phoneDAO.create(phone);
             			phone.setId(phId);
-            			logger.debug("New phone id: {}, compare: {}", phId, phone.getId());
             		}else{
             			phoneDAO.update(phone);
             		}
@@ -138,7 +137,6 @@ public class ContactService {
                     	if (bytes.length>0){
                     		int attId=attachmentDAO.create(attachment);
                     		attachment.setId(attId);
-                    		logger.debug("New attachment id: {}, compare: {}", attId, attachment.getId());
                     		logger.debug("Field of file field name: {}", item.getFieldName());
                     		String fileName =item.getName();
                     		String ext = FileUploadService.getFileExtention(fileName);
@@ -165,7 +163,7 @@ public class ContactService {
         } catch (ConnectionPoolException | DAOException | SQLException | UploadException e) {
         	try {
                 if(conn!=null) {
-                	logger.debug("Rollback in changeContact");
+                	logger.info("Rollback in changeContact");
                     conn.rollback();
                 }
             } catch (SQLException e1) {
@@ -185,7 +183,7 @@ public class ContactService {
 	
 	
 	public static List<Contact> receiveContacts(int positionFrom, int count, String statement) throws ServiceException {
-		logger.debug("Start of receiveContacts");
+		logger.info("Start of receiveContacts with parameters: positionFrom - {}, count - {}", positionFrom, count);
         Connection conn = null;
         List<Contact> contacts;
         try {
@@ -206,7 +204,7 @@ public class ContactService {
     }
 	
 	public static int receiveContactsCount(String statement) throws ServiceException {
-		logger.debug("Start of receiveContactsCount");
+		logger.info("Start of receiveContactsCount with statement: {}", statement);
         Connection conn = null;
         try {
             conn = ConnectionPool.getInstance().getConnection();
@@ -225,7 +223,7 @@ public class ContactService {
     }
 
 	public static String prepareSearchStatement(Contact contact, LocalDate more, LocalDate less) throws ServiceException {
-		logger.debug("Start of prepareSearchStatement");
+		logger.debug("Start of prepareSearchStatement with contact: [{}]", contact);
         Connection conn = null;
         try {
             conn = ConnectionPool.getInstance().getConnection();
@@ -244,7 +242,7 @@ public class ContactService {
     }
 	
 	public static Contact receiveContactById(int contactId) throws ServiceException {
-		logger.debug("Start of receiveContactById");
+		logger.debug("Start of receiveContactById with contactId - {}", contactId);
         Connection conn = null;
         Contact contact;
         try {

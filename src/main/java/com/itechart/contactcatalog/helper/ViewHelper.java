@@ -25,7 +25,7 @@ public class ViewHelper {
 			conn = ConnectionPool.getInstance().getConnection();
 			ContactDAO dao = new ContactDAO(conn);
 	        sexList = dao.takeSexList();
-		}catch (ConnectionPoolException | DAOException e) {  //или выбрасывать на страницу?
+		}catch (ConnectionPoolException | DAOException e) {
         	logger.error("Exception in takeSexList: {} ", e);
 		} finally {
         	try {
@@ -44,7 +44,7 @@ public class ViewHelper {
 			conn = ConnectionPool.getInstance().getConnection();
 			PhoneDAO dao = new PhoneDAO(conn);
 			phoneTypes = dao.takePhoneTypes();
-		}catch (ConnectionPoolException | DAOException e) {  //или выбрасывать на страницу?
+		}catch (ConnectionPoolException | DAOException e) { 
         	logger.error("Exception in takePhoneTypes: {} ", e);
 		} finally {
         	try {
@@ -63,7 +63,7 @@ public class ViewHelper {
 			conn = ConnectionPool.getInstance().getConnection();
 			ContactDAO dao = new ContactDAO(conn);
 			statusList = dao.takeMaritalStatusList();
-		}catch (ConnectionPoolException | DAOException e) {  //или выбрасывать на страницу?
+		}catch (ConnectionPoolException | DAOException e) { 
         	logger.error("Exception in takeMaritalStatusList: {} ", e);
 		} finally {
         	try {

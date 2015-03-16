@@ -55,7 +55,7 @@
 			<label for="lastname" class="styled">Фамилия:</label>
 			<div class="thefield">
 				<input type="text" id="lastname" name="lastname" value="${contact.lastName}" necessary regex="^[A-ZА-Я]{1}[a-zёа-я]{2,19}-?([A-ZА-Я]{1}[a-zёа-я]{2,18})?$" onfocus="getHint(this)" onblur="hideHint(this)"/><br />
-				<span class="hidden">Фамилия обязательна для заполнения и может содержать только буквы и дефис (до 30 символов)</span>
+				<span class="hidden">Фамилия обязательна для заполнения и может содержать только буквы и дефис (до 40 символов)</span>
 			</div>
 		</div>
 		<div class="fieldwrapper">

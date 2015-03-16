@@ -26,7 +26,7 @@ public class TemplateCreator {
 	}
 	
 	public String formMessage(Contact contact, String fileName){
-	    logger.debug("Start of formMessage method");
+	    logger.info("Start of formMessage method with parameters: contact - [{}], fileName - {}", contact, fileName);
 	    Template t = ve.getTemplate(fileName, MESSAGE_ENCODING);
 	    VelocityContext vc = new VelocityContext();
 	    vc.put("contact", contact);
